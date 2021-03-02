@@ -19,7 +19,7 @@ let angle = 0;
 const character = new Character('./images/character/Character_base.png');
 character.texture.addEventListener('load', draw,false);
 const px = character.pivot ? character.pivot.x : 0;
-const py = character.pivot ? character.pivot.y : 0;
+let py = character.pivot ? character.pivot.y : 0;
 
 
 
@@ -34,7 +34,7 @@ function loopy(ms){
    angle=move.getRotate(ctx,px,py,angle);
    y+=move.getY();
    character.pivot.y +=move.getY();
-   console.log(character.pivot.y);
+   py = character.pivot.y;
    if(!move.action){}
    deleteImg();
    draw();
@@ -50,5 +50,5 @@ function draw() {
    ctx.drawImage(character.texture, x, y, 100,100); 
 }
 function deleteImg(){
-   ctx.clearRect(-400,-300, w*2, h*2);
+   ctx.clearRect(x,y, w*2, h*2);
 }

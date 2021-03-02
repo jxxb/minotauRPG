@@ -20,7 +20,7 @@ export default class KeyControls{
         
         if(this.keys[37]||this.keys[65]){
             ctx.save();
-            ctx.translate(px , py );  
+            ctx.translate(px , py ); 
             // Perform the rotation  
             ctx.rotate(DegToRad(angle));  
             // Translate back to the top left of our image  
