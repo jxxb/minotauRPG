@@ -1,4 +1,5 @@
 import KeyControls from './KeyControls.js';
+import Character from './Character.js';
 
 const canvas = document.querySelector('#board canvas');
 const ctx = canvas.getContext('2d');
@@ -11,9 +12,14 @@ let last = 0;
 let x = -50;
 let y = -50;
 const move = new KeyControls();
-const img = new Image();       
-img.src = './images/character/Character_base.png'; 
-img.addEventListener('load', draw,false);
+//const img = new Image();       
+//img.src = './images/character/Character_base.png'; 
+//img.addEventListener('load', draw,false);
+let angle = 0;
+const character = new Character('./images/character/Character_base.png');
+character.texture.addEventListener('load', draw,false);
+const px = character.pivot ? character.pivot.x : 0;
+const py = character.pivot ? character.pivot.y : 0;
 
 
 
@@ -25,28 +31,24 @@ function loopy(ms){
    last=t;
    //game logic code
 
-   x+=move.getX();
-   console.log(move.getX());
+   angle=move.getRotate(ctx,px,py,angle);
    y+=move.getY();
+   character.pivot.y +=move.getY();
+   console.log(character.pivot.y);
    if(!move.action){}
    deleteImg();
    draw();
+   //ctx.restore();
+   
 
 }
 requestAnimationFrame(loopy);
 
 function draw() {
-  //rainbow
-  /* for (let i = 0; i < 6; i++) {
-      
-      ctx.fillStyle = `hsl(${i * (250/6)}, 90%, 55%)`;
-      ctx.fillRect(0, i*20,200,20);  
-   }*/
    //circle
          
-   ctx.drawImage(img, x, y, 100,100); 
-   console.log(x +', '+y);
+   ctx.drawImage(character.texture, x, y, 100,100); 
 }
 function deleteImg(){
-   ctx.clearRect(-400,-300, w, h);
+   ctx.clearRect(-400,-300, w*2, h*2);
 }

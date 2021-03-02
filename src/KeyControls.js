@@ -15,11 +15,25 @@ export default class KeyControls{
     get action(){
         return this.keys[32];
     }
-    getX(){
+    getRotate(ctx, px, py, angle){
+        const DegToRad = deg =>(Math.PI/180)*deg;
+        
         if(this.keys[37]||this.keys[65]){
+            ctx.save();
+            ctx.translate(px , py );  
+            // Perform the rotation  
+            ctx.rotate(DegToRad(angle));  
+            // Translate back to the top left of our image  
+            ctx.translate(-px, -py);
             return -1;
         }
         if(this.keys[39]||this.keys[68]){
+            ctx.save();
+            ctx.translate(px, py);  
+            // Perform the rotation  
+            ctx.rotate(DegToRad(angle));  
+            // Translate back to the top left of our image  
+            ctx.translate(-px, -py);
             return 1;
         }
         return 0;
@@ -33,5 +47,6 @@ export default class KeyControls{
         }
         return 0;
     }
+    
 
 }
