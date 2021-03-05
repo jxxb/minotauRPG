@@ -17,6 +17,8 @@ const move = new KeyControls();
 //img.addEventListener('load', draw,false);
 let angle = 0;
 const character = new Character('./images/character/Character_base.png');
+const sword = new Character('./images/weapons/sword_base-01.png');
+const enemy = new Character('./images/enemy/Enemy.png');
 character.texture.addEventListener('load', draw,false);
 const px = character.pivot ? character.pivot.x : 0;
 let py = character.pivot ? character.pivot.y : 0;
@@ -30,25 +32,29 @@ function loopy(ms){
    dt = t-last;
    last=t;
    //game logic code
-
+   //ctx.save();
+   ctx.save();
    angle=move.getRotate(ctx,px,py,angle);
    y+=move.getY();
    character.pivot.y +=move.getY();
    py = character.pivot.y;
-   if(!move.action){}
    deleteImg();
-   draw();
+   if(move.action){
+      draw(sword.texture, x-50,y-85,150,150);
+      console.log('Have at thee?');
+   }
+   draw(character.texture, x, y, 100,100);
    //ctx.restore();
+   draw(enemy.texture,100,100,115,100);
    
 
 }
 requestAnimationFrame(loopy);
 
-function draw() {
+function draw(texture, x, y, sx, sy) {
    //circle
-         
-   ctx.drawImage(character.texture, x, y, 100,100); 
+   ctx.drawImage(texture, x, y, sx, sy); 
 }
 function deleteImg(){
-   ctx.clearRect(x,y, w*2, h*2);
+   ctx.clearRect(x-150,y-150, w*2, h*2);
 }
