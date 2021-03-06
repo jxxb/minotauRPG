@@ -125,7 +125,12 @@ let dt = 0;
 let last = 0;
 
 let gameOver = false;
-let minowsNum = 0;
+
+function getRandomIntInclusive(min, max) {
+   min = Math.ceil(min);
+   max = Math.floor(max);
+   return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
+ }
 
 function loopy(ms){
    requestAnimationFrame(loopy);
@@ -134,21 +139,22 @@ function loopy(ms){
    last=t;
    //game logic code
    //ctx.save();
+   console.log(minows);
    if(controls.action){
       drawSword();
       sword.visible = true;
    }
    else{sword.visible = false;}
-   if(minowsNum == 0){
-      spawnMino(50,50,0);
-      minowsNum++;
+  
+   if(minows.children.length < 1){
+      spawnMino(getRandomIntInclusive(50, 700),getRandomIntInclusive(50, 700),0);
    }
 
    minows.children.forEach((mino) => {
 
       const dx = mino.pos.x + mino.size.sx/2 - (sword.pos.x + sword.size.sx/2);
       const dy = mino.pos.y + mino.size.sy/2 - (sword.pos.y + sword.size.sy/2);
-      if (Math.sqrt(dx * dx +dy * dy) < (mino.size.sx/2 + sword.size.sx/2)){
+      if (sword.visible && Math.sqrt(dx * dx +dy * dy) < (mino.size.sx/2 + sword.size.sx/2)){
          mino.dead = true;
       }
    });
