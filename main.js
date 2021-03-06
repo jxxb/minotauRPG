@@ -47,7 +47,38 @@ function spawnMino(x, y, speed){
    mino.size.sx = 120;
    mino.size.sy = 100;
    mino.update = function (dt){
-      this.pos.x += speed*dt;
+   let dx = 0;
+   let dy = 0;
+
+      let differenceX = Math.abs(character.pos.x - mino.pos.x);
+      let differenceY = Math.abs(character.pos.y - mino.pos.y);
+
+      if (differenceX > differenceY) {
+         mino.size.sx = 100;
+         mino.size.sy = 120;
+         if (character.pos.x < mino.pos.x) {
+            dx = -100;
+            textures.mino.img.src = 'images/enemy/Enemy-left.png'
+         } else if (character.pos.x > mino.pos.x) {
+            dx = 100;
+            textures.mino.img.src = 'images/enemy/Enemy-right.png'
+         }
+         dy = 0;
+      } else if (differenceX < differenceY) {
+         mino.size.sx = 120;
+         mino.size.sy = 100;
+         if (character.pos.y < mino.pos.y) {
+            dy = -100;
+            textures.mino.img.src = 'images/enemy/Enemy.png'
+         } else if (character.pos.y > mino.pos.y) {
+            dy = 100;
+            textures.mino.img.src = 'images/enemy/Enemy-down.png'
+         }
+         dx = 0;
+      }    
+      
+      mino.pos.x += dt * dx;
+      mino.pos.y += dt * dy;
    };
    minows.add(mino);
 }
