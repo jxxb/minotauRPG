@@ -12,12 +12,14 @@ const scene = new Container();
 const textures ={
    character: new Texture('images/character/Character_base.png'),
    mino: new Texture('images/enemy/Enemy.png'),
-   sword: new Texture('images/weapons/sword_base-01.png')
+   sword: new Texture('images/weapons/sword_base-01.png'),
+   vWall: new Texture('images/wall/wall_vertical.png'),
+   hWall: new Texture('images/wall/wall_horizontal.png')
 };
 
 const character = new Sprite(textures.character);
 character.pos.x = 120;
-character.pos.y = h/2-16;
+character.pos.y = 400;
 character.size.sx = 100;
 character.size.sy = 100;
 character.update = function(dt,t){
@@ -39,6 +41,29 @@ character.update = function(dt,t){
    if(this.pos.y < 0){this.pos.y = 0;}
    if(this.pos.y > h - this.size.sy){this.pos.y = h - this.size.sy;}
 }
+
+const vWalls = new Container();
+function spawnVWalls(x, y) {
+   const vWall = new Sprite(textures.vWall);
+   textures.vWall.img.src = 'images/wall/wall_vertical.png';
+   vWall.size.sx = 20;
+   vWall.size.sy = 100;
+   vWall.pos.x = x;
+   vWall.pos.y = y;
+   vWalls.add(vWall);
+}
+
+const hWalls = new Container();
+function spawnHWalls(x,y) {
+   const hWall = new Sprite(textures.hWall);
+   textures.hWall.img.src = 'images/wall/wall_horizontal.png';
+   hWall.size.sx = 100;
+   hWall.size.sy = 20;
+   hWall.pos.x = x;
+   hWall.pos.y = y;
+   hWalls.add(hWall);
+}
+
 const minows = new Container();
 function spawnMino(x, y, speed){
    const mino = new Sprite(textures.mino);
@@ -117,6 +142,8 @@ function drawSword(){
    }
 }
 
+scene.add(hWalls);
+scene.add(vWalls);
 scene.add(sword);
 scene.add(character);
 scene.add(minows);
@@ -139,7 +166,6 @@ function loopy(ms){
    last=t;
    //game logic code
    //ctx.save();
-   console.log(minows);
    if(controls.action){
       drawSword();
       sword.visible = true;
@@ -150,8 +176,51 @@ function loopy(ms){
       spawnMino(getRandomIntInclusive(50, 700),getRandomIntInclusive(50, 700),0);
    }
 
-   minows.children.forEach((mino) => {
+   //replace 1 with the length of the array of cells we get from the backend team
+   if (vWalls.children.length < 1) {
+      //x and y will be replaced by the locations of the cells sent from the back end team
+      spawnVWalls(200,200);
+   }
+   if (hWalls.children.length < 1) {
+      spawnHWalls(400,400);
+   }
 
+   //horizontal character wall colision detection
+   hWalls.children.forEach((hWall) => {
+
+      const colisionYDistance = hWall.size.sy/2 + character.size.sy/2;
+      const colisionXDistance = hWall.size.sx/2 + character.size.sx/2;
+      const colisionX = (hWall.pos.x + (hWall.size.sx/2)) - (character.pos.x + (character.size.sx/2));      // y colision area
+      const colisionY = (hWall.pos.y + (hWall.size.sy/2)) - (character.pos.y + (character.size.sy/2));
+
+      if (Math.abs(colisionX) <= Math.abs(colisionXDistance) && Math.abs(colisionY) <= Math.abs(colisionYDistance)) {
+         if (hWall.pos.y < character.pos.y){
+            character.pos.y += hWall.size.sy/2;
+         } else if (hWall.pos.y > character.pos.y){
+            character.pos.y -= hWall.size.sy/2;
+         }
+      }
+   });
+
+   //vertical character wall colision detection
+   vWalls.children.forEach((vWall) => {
+
+      const colisionYDistance = vWall.size.sy/2 + character.size.sy/2;
+      const colisionXDistance = vWall.size.sx/2 + character.size.sx/2;
+      const colisionX = (vWall.pos.x + (vWall.size.sx/2)) - (character.pos.x + (character.size.sx/2));      // y colision area
+      const colisionY = (vWall.pos.y + (vWall.size.sy/2)) - (character.pos.y + (character.size.sy/2));
+
+      if (Math.abs(colisionY) <= Math.abs(colisionYDistance) && Math.abs(colisionX) <= Math.abs(colisionXDistance)) {
+         if (vWall.pos.x < character.pos.x){
+            character.pos.x += vWall.size.sx/2;
+         } else if (vWall.pos.x > character.pos.x){
+            character.pos.x -= vWall.size.sx/2;
+         }
+      }
+   });
+
+   //enemy sword collision detection
+   minows.children.forEach((mino) => {
       const dx = mino.pos.x + mino.size.sx/2 - (sword.pos.x + sword.size.sx/2);
       const dy = mino.pos.y + mino.size.sy/2 - (sword.pos.y + sword.size.sy/2);
       if (sword.visible && Math.sqrt(dx * dx +dy * dy) < (mino.size.sx/2 + sword.size.sx/2)){
