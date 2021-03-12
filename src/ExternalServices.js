@@ -175,12 +175,16 @@ export default class ExternalServices {
         const options = {
             method: 'POST',
             body:JSON.stringify(creds),
-            header: {
+            headers: {
                 'Content-Type':'application/json'
             },
         };
+        
         console.log(options);
         const response = await fetch(base_url + 'signin', options).then(convertToJson);
+        if (response.status === "200")
+            localStorage.set('somenamehere',response.user);
+        //Redirection send an error
         console.log(response);
         return response;//.accessToken;
     }
