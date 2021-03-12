@@ -182,8 +182,9 @@ export default class ExternalServices {
         
         console.log(options);
         const response = await fetch(base_url + 'signin', options).then(convertToJson);
+        //
         if (response.status === "200")
-            localStorage.set('somenamehere',response.user);
+            localStorage.set('somenamehere',response.user); //Or a cookie
         //Redirection send an error
         console.log(response);
         return response;//.accessToken;
