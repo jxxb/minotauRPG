@@ -197,7 +197,7 @@ export default class ExternalServices {
         const options = {
             method: 'POST',
             body:JSON.stringify(creds),
-            header: {
+            headers: {
                 'Content-Type':'application/json'
             },
         };
