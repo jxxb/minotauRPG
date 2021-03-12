@@ -114,8 +114,11 @@ export default class ExternalServices {
             { vertical: true },
             { vertical: true },
             { vertical: true },
-            { vertical: false }
+            { vertical: false },
+            { vertical: false, horizontal: false },
         ]
+
+        let gridArray = [];
 
         APIResponse.forEach((cell) => {
             if (cell.vertical && cell.horizontal) {
@@ -132,8 +135,28 @@ export default class ExternalServices {
                // 'empty';
                 cell.type = 4;
             }
+            gridArray.push(cell.type);
         })
 
+        function listToMatrix(list, numElements) {
+            let matrix = [], i, j;
+
+            for (i=0, j=-1; i<list.length; i++) {
+                if (i % numElements === 0) {
+                    j++;
+                    matrix[j] = [];
+                }
+                matrix[j].push(list[i]);
+            }
+            console.log(matrix);
+            return matrix;
+
+        }
+        
+        return listToMatrix(gridArray, 10);
+        
+
+    };
         //empty 
         //bottom          hWalls
             //v = false h = true
@@ -143,7 +166,7 @@ export default class ExternalServices {
 
 
 
-        // for(let i = 0; i <w; i++) {
+        // for(let i = 0; i < w; i++) {
         //     for(let j = 0; j < h; j++) {
         //         if (.vertical) {
 
@@ -163,8 +186,7 @@ export default class ExternalServices {
             //     vWall.pos.y = y;
             //     vWalls.add(vWall);
             // }
-            return APIResponse;
-        };
+       
    
 
     saveMaze() {
