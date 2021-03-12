@@ -1,6 +1,6 @@
 import src from './src/index.js';
 
-const {CanvasRenderer, Text, KeyControls, Texture, Sprite, Container} = src;
+const {CanvasRenderer, Text, KeyControls, Texture, Sprite, Container, ExternalServices} = src;
 
 //game setup
 const w = 800;
@@ -16,6 +16,7 @@ const textures ={
    vWall: new Texture('images/wall/wall_vertical.png'),
    hWall: new Texture('images/wall/wall_horizontal.png')
 };
+const maze = new ExternalServices();
 
 const character = new Sprite(textures.character);
 character.pos.x = 120;
@@ -43,6 +44,18 @@ character.update = function(dt,t){
 }
 
 const vWalls = new Container();
+
+function walls(x,y) {
+
+   //type 1 = bruh
+
+   //type 2 = right
+   //type 3 = bottom
+   //type 4 = empty
+}
+
+
+
 function spawnVWalls(x, y) {
    const vWall = new Sprite(textures.vWall);
    textures.vWall.img.src = 'images/wall/wall_vertical.png';

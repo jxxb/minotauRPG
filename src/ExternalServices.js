@@ -117,30 +117,55 @@ export default class ExternalServices {
             { vertical: false }
         ]
 
-
-        for(let i = 0; i < APIResponse.length; i++) {
-            for(let j = 0; j < APIResponse.length; j++) {
-                if (i.vertical) {
-
-                }
-                if (i.horizontal) {
-
-                }
-            }
-        }
-            if (cell.vertical) {
-                const vWall = new Sprite(textures.vWall);
-                textures.vWall.img.src = 'images/wall/wall_vertical.png';
+        APIResponse.forEach((cell) => {
+            if (cell.vertical && cell.horizontal) {
+               // 'bottomRight'
+                cell.type = 1;
                 
-                vWall.size.sx = 20;
-                vWall.size.sy = 100;
-                vWall.pos.x = x;
-                vWall.pos.y = y;
-                vWalls.add(vWall);
+            } else if (cell.vertical && !cell.horizontal) {
+                //'right';
+                cell.type = 2;
+            } else if (!cell.vertical && cell.horizontal) {
+               // 'bottom';
+                cell.type = 3;
+            } else {
+               // 'empty';
+                cell.type = 4;
             }
-            return vWall;
-        });
-    }
+        })
+
+        //empty 
+        //bottom          hWalls
+            //v = false h = true
+
+        //right           vWalls
+        //bottomRight v & hWalls
+
+
+
+        // for(let i = 0; i <w; i++) {
+        //     for(let j = 0; j < h; j++) {
+        //         if (.vertical) {
+
+        //         }
+        //         if (i.horizontal) {
+
+        //         }
+        //     }
+        // }
+            // if (cell.vertical) {
+            //     const vWall = new Sprite(textures.vWall);
+            //     textures.vWall.img.src = 'images/wall/wall_vertical.png';
+                
+            //     vWall.size.sx = 20;
+            //     vWall.size.sy = 100;
+            //     vWall.pos.x = x;
+            //     vWall.pos.y = y;
+            //     vWalls.add(vWall);
+            // }
+            return APIResponse;
+        };
+   
 
     saveMaze() {
 
@@ -154,12 +179,13 @@ export default class ExternalServices {
                 'Content-Type':'application/json'
             },
         };
+        console.log(options);
         const response = await fetch(base_url + 'signin', options).then(convertToJson);
         console.log(response);
         return response;//.accessToken;
     }
 
     async signUpRequest(creds) {
-        const options
+        //const options
     }
 }
