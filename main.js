@@ -1,10 +1,14 @@
 import src from './src/index.js';
 
-const {CanvasRenderer, Text, KeyControls, Texture, Sprite, Container} = src;
+const {CanvasRenderer, Text, KeyControls, Texture, Sprite, Container, ExternalServices} = src;
 
 //game setup
 const w = 800;
 const h = 600;
+const columns = 10;
+const rows = 10;
+const cellW = w/columns;
+const cellH = h/rows;
 const renderer = new CanvasRenderer(w,h);
 document.querySelector('#board').appendChild(renderer.view);
 const controls = new KeyControls();
@@ -16,12 +20,13 @@ const textures ={
    vWall: new Texture('images/wall/wall_vertical.png'),
    hWall: new Texture('images/wall/wall_horizontal.png')
 };
+const maze = new ExternalServices();
 
 const character = new Sprite(textures.character);
 character.pos.x = 120;
 character.pos.y = 400;
-character.size.sx = 100;
-character.size.sy = 100;
+character.size.sx = 20;
+character.size.sy = 20;
 character.update = function(dt,t){
    this.pos.x += controls.x * dt * 200;
    this.pos.y += controls.y * dt * 200;
@@ -46,7 +51,7 @@ const vWalls = new Container();
 function spawnVWalls(x, y) {
    const vWall = new Sprite(textures.vWall);
    textures.vWall.img.src = 'images/wall/wall_vertical.png';
-   vWall.size.sx = 20;
+   vWall.size.sx = 15;
    vWall.size.sy = 100;
    vWall.pos.x = x;
    vWall.pos.y = y;
@@ -58,10 +63,39 @@ function spawnHWalls(x,y) {
    const hWall = new Sprite(textures.hWall);
    textures.hWall.img.src = 'images/wall/wall_horizontal.png';
    hWall.size.sx = 100;
-   hWall.size.sy = 20;
+   hWall.size.sy = 15;
    hWall.pos.x = x;
    hWall.pos.y = y;
    hWalls.add(hWall);
+}
+
+function walls() {
+  const mazeWalls = maze.getMaze(); 
+  ;
+  for(let i = 0; i < mazeWalls.length; i++) {
+      for(let j = 0; j < mazeWalls[i].length; j++) {
+      //type 1 = bruh
+      if(mazeWalls[i][j] === 1) {
+         spawnVWalls(cellW * i,cellH * j);
+         spawnHWalls(cellW * i,cellH * j);
+      }  
+
+      //type 2 = right
+      if(mazeWalls[i][j] === 2) {
+         spawnVWalls(cellW * i,cellH * j);
+      }    
+      
+      //type 3 = bottom
+   
+      if(mazeWalls[i][j] === 3) {
+         spawnHWalls(cellW * i, cellH * j);
+      }  
+      //type 4 = empty
+      else {
+
+         }
+      }
+   }
 }
 
 const minows = new Container();
@@ -69,8 +103,8 @@ function spawnMino(x, y, speed){
    const mino = new Sprite(textures.mino);
    mino.pos.x = x;
    mino.pos.y = y;
-   mino.size.sx = 120;
-   mino.size.sy = 100;
+   mino.size.sx = 30;
+   mino.size.sy = 25;
    mino.update = function (dt){
    let dx = 0;
    let dy = 0;
@@ -80,8 +114,8 @@ function spawnMino(x, y, speed){
       let differenceY = Math.abs(character.pos.y - mino.pos.y);
 
       if (differenceX > differenceY) {
-         mino.size.sx = 100;
-         mino.size.sy = 120;
+         mino.size.sx = 25;
+         mino.size.sy = 30;
          if (character.pos.x < mino.pos.x) {
             dx = -100;
             textures.mino.img.src = 'images/enemy/Enemy-left.png'
@@ -91,8 +125,8 @@ function spawnMino(x, y, speed){
          }
          dy = 0;
       } else if (differenceX < differenceY) {
-         mino.size.sx = 120;
-         mino.size.sy = 100;
+         mino.size.sx = 30;
+         mino.size.sy = 25;
          if (character.pos.y < mino.pos.y) {
             dy = -100;
             textures.mino.img.src = 'images/enemy/Enemy.png'
@@ -160,6 +194,8 @@ function getRandomIntInclusive(min, max) {
    return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
  }
 
+ walls();
+
 function loopy(ms){
    requestAnimationFrame(loopy);
    const t = ms / 1000;
@@ -180,54 +216,54 @@ function loopy(ms){
 
    //replace 1 with the length of the array of cells we get from the backend team
    //spawn vertical walls
-   if (vWalls.children.length < 1) {
-      //x and y will be replaced by the locations of the cells sent from the back end team
-      spawnVWalls(0,0);
-      spawnVWalls(0,100);
-      spawnVWalls(0,200);
-      spawnVWalls(0,300);
-      spawnVWalls(0,400);
-      spawnVWalls(0,500);
-      spawnVWalls(0,600);
-      spawnVWalls(0,700);
+   // if (vWalls.children.length < 1) {
+   //    //x and y will be replaced by the locations of the cells sent from the back end team
+   //    spawnVWalls(0,0);
+   //    spawnVWalls(0,100);
+   //    spawnVWalls(0,200);
+   //    spawnVWalls(0,300);
+   //    spawnVWalls(0,400);
+   //    spawnVWalls(0,500);
+   //    spawnVWalls(0,600);
+   //    spawnVWalls(0,700);
 
-      spawnVWalls(780,0);
-      spawnVWalls(780,100);
-      spawnVWalls(780,200);
-      spawnVWalls(780,300);
-      spawnVWalls(780,400);
-      spawnVWalls(780,500);
-      spawnVWalls(780,600);
-      spawnVWalls(780,700);
+   //    spawnVWalls(780,0);
+   //    spawnVWalls(780,100);
+   //    spawnVWalls(780,200);
+   //    spawnVWalls(780,300);
+   //    spawnVWalls(780,400);
+   //    spawnVWalls(780,500);
+   //    spawnVWalls(780,600);
+   //    spawnVWalls(780,700);
 
-      spawnVWalls(430,150);
+   //    spawnVWalls(430,150);
 
-   }
+   // }
 
-   //spawn horizontal walls
-   if (hWalls.children.length < 1) {
-      spawnHWalls(0,0);
-      spawnHWalls(100,0);
-      spawnHWalls(200,0);
-      spawnHWalls(300,0);
-      spawnHWalls(400,0);
-      spawnHWalls(500,0);
-      spawnHWalls(600,0);
-      spawnHWalls(700,0);
+   // //spawn horizontal walls
+   // if (hWalls.children.length < 1) {
+   //    spawnHWalls(0,0);
+   //    spawnHWalls(100,0);
+   //    spawnHWalls(200,0);
+   //    spawnHWalls(300,0);
+   //    spawnHWalls(400,0);
+   //    spawnHWalls(500,0);
+   //    spawnHWalls(600,0);
+   //    spawnHWalls(700,0);
 
-      spawnHWalls(0,580);
-      spawnHWalls(100,580);
-      spawnHWalls(200,580);
-      spawnHWalls(300,580);
-      spawnHWalls(400,580);
-      spawnHWalls(500,580);
-      spawnHWalls(600,580);
-      spawnHWalls(700,580);
+   //    spawnHWalls(0,580);
+   //    spawnHWalls(100,580);
+   //    spawnHWalls(200,580);
+   //    spawnHWalls(300,580);
+   //    spawnHWalls(400,580);
+   //    spawnHWalls(500,580);
+   //    spawnHWalls(600,580);
+   //    spawnHWalls(700,580);
 
-      spawnHWalls(0,100);
-      spawnHWalls(100,100);
-      spawnHWalls(330,400);
-   }
+   //    spawnHWalls(0,100);
+   //    spawnHWalls(100,100);
+   //    spawnHWalls(330,400);
+   // }
 
    //horizontal character wall colision detection
    hWalls.children.forEach((hWall) => {
@@ -338,5 +374,5 @@ function loopy(ms){
    scene.update(dt,t);
    renderer.render(scene);
 }
-requestAnimationFrame(loopy);
 
+requestAnimationFrame(loopy);
