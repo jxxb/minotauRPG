@@ -9,20 +9,34 @@ export default class User{
         return pass1==pass2;
     }
     
-    createUser(){
+    loginUser(){
         const email = document.querySelector('.email').value;
         const password = document.querySelector('.password').value;
+        // const confPass = document.querySelector('.confPass').value;
+        // const name = document.querySelector('.username').value;
         this.login({email,password});
     }
 
-    loadUser(){
-
+    createUser(){
+        const email = document.querySelector('.email').value;
+        const password = document.querySelector('.password').value;
+        const confirmPassword = document.querySelector('.confPass').value;
+        const username = document.querySelector('.username').value;
+        this.signup({email,password,confirmPassword,username});
     }
 
     async login(creds) {
         try {
             //TOKEN?
             const response = await this.services.loginRequest(creds);
+        } catch(err) {
+            console.log("WAHHHHHHH!");
+        }
+    }
+    async signup(creds) {
+        try {
+            //TOKEN?
+            const response = await this.services.signupRequest(creds);
         } catch(err) {
             console.log("WAHHHHHHH!");
         }

@@ -12,115 +12,23 @@ function convertToJson(jeff) {
 export default class ExternalServices {
     constructor() {}
 
-    getMaze() {
-        
-        //if cell.verical = true call spawnVWall(cell);
-        const APIResponse = [
-            { vertical: true, horizontal: false },
-            { vertical: true, horizontal: false },
-            { vertical: true, horizontal: false },
-            { vertical: false, horizontal: false },
-            { vertical: false, horizontal: true },
-            { vertical: false, horizontal: false },
-            { vertical: true, horizontal: false },
-            { vertical: false, horizontal: true },
-            { vertical: false, horizontal: true },
-            { horizontal: false },
-            { vertical: false, horizontal: true },
-            { vertical: true, horizontal: false },
-            { vertical: false, horizontal: true },
-            { vertical: false, horizontal: false },
-            { vertical: true, horizontal: true },
-            { vertical: true, horizontal: false },
-            { vertical: true, horizontal: true },
-            { vertical: false, horizontal: false },
-            { vertical: false, horizontal: true },
-            { horizontal: true },
-            { vertical: false, horizontal: true },
-            { vertical: true, horizontal: false },
-            { vertical: false, horizontal: true },
-            { vertical: true, horizontal: true },
-            { vertical: true, horizontal: false },
-            { vertical: false, horizontal: false },
-            { vertical: false, horizontal: true },
-            { vertical: false, horizontal: true },
-            { vertical: false, horizontal: false },
-            { horizontal: true },
-            { vertical: false, horizontal: true },
-            { vertical: false, horizontal: true },
-            { vertical: false, horizontal: false },
-            { vertical: true, horizontal: true },
-            { vertical: true, horizontal: false },
-            { vertical: true, horizontal: false },
-            { vertical: false, horizontal: false },
-            { vertical: false, horizontal: false },
-            { vertical: false, horizontal: false },
-            { horizontal: true },
-            { vertical: false, horizontal: false },
-            { vertical: false, horizontal: true },
-            { vertical: false, horizontal: true },
-            { vertical: true, horizontal: false },
-            { vertical: true, horizontal: false },
-            { vertical: true, horizontal: false },
-            { vertical: true, horizontal: false },
-            { vertical: true, horizontal: true },
-            { vertical: false, horizontal: true },
-            { horizontal: false },
-            { vertical: false, horizontal: true },
-            { vertical: true, horizontal: true },
-            { vertical: false, horizontal: false },
-            { vertical: true, horizontal: true },
-            { vertical: false, horizontal: false },
-            { vertical: true, horizontal: true },
-            { vertical: false, horizontal: true },
-            { vertical: false, horizontal: false },
-            { vertical: true, horizontal: true },
-            { horizontal: false },
-            { vertical: false, horizontal: true },
-            { vertical: false, horizontal: true },
-            { vertical: false, horizontal: true },
-            { vertical: true, horizontal: false },
-            { vertical: false, horizontal: false },
-            { vertical: true, horizontal: false },
-            { vertical: false, horizontal: false },
-            { vertical: true, horizontal: true },
-            { vertical: false, horizontal: true },
-            { horizontal: true },
-            { vertical: true, horizontal: false },
-            { vertical: false, horizontal: false },
-            { vertical: false, horizontal: false },
-            { vertical: true, horizontal: false },
-            { vertical: true, horizontal: true },
-            { vertical: true, horizontal: false },
-            { vertical: false, horizontal: false },
-            { vertical: true, horizontal: true },
-            { vertical: false, horizontal: true },
-            { horizontal: false },
-            { vertical: false, horizontal: false },
-            { vertical: true, horizontal: false },
-            { vertical: true, horizontal: true },
-            { vertical: false, horizontal: true },
-            { vertical: false, horizontal: true },
-            { vertical: true, horizontal: false },
-            { vertical: false, horizontal: false },
-            { vertical: false, horizontal: false },
-            { vertical: false, horizontal: true },
-            { horizontal: false },
-            { vertical: true },
-            { vertical: true },
-            { vertical: false },
-            { vertical: false },
-            { vertical: false },
-            { vertical: true },
-            { vertical: true },
-            { vertical: true },
-            { vertical: false },
-            { vertical: false, horizontal: false },
-        ]
-
+    async getMaze() {
+        const options = {
+            method: 'PATCH',
+            body:JSON.stringify({
+                h: 10,
+                w: 10,
+                userId: '604c0eb343a5ae00041ac9a8'
+            }),
+            headers: {
+                'Content-Type':'application/json'
+            },
+        };
+    
+        const APIResponse = await fetch(base_url + 'newGame', options).then(convertToJson);
         let gridArray = [];
 
-        APIResponse.forEach((cell) => {
+        APIResponse.maze.forEach((cell) => {
             if (cell.vertical && cell.horizontal) {
                // 'bottomRight'
                 cell.type = 1;
@@ -135,9 +43,10 @@ export default class ExternalServices {
                // 'empty';
                 cell.type = 4;
             }
-            gridArray.push(cell.type);
+            gridArray.push(cell);
         })
 
+        console.log(gridArray);
         function listToMatrix(list, numElements) {
             let matrix = [], i, j;
 
@@ -146,7 +55,7 @@ export default class ExternalServices {
                     j++;
                     matrix[j] = [];
                 }
-                matrix[j].push(list[i]);
+                matrix[j].push(list[i].type);
             }
             console.log(matrix);
             return matrix;
@@ -201,18 +110,31 @@ export default class ExternalServices {
                 'Content-Type':'application/json'
             },
         };
-        
-        console.log(options);
+    
         const response = await fetch(base_url + 'signin', options).then(convertToJson);
         //
         if (response.status === "200")
-            localStorage.set('somenamehere',response.user); //Or a cookie
+            localStorage.set('user',response.user); //Or a cookie
         //Redirection send an error
         console.log(response);
         return response;//.accessToken;
     }
 
-    async signUpRequest(creds) {
-        //const options
+    async signupRequest(creds) {
+        const options = {
+            method: 'POST',
+            body: JSON.stringify(creds),
+            headers: {
+                'Content-Type':'application/json'
+            },
+        };
+    
+        const response = await fetch(base_url + 'signup', options).then(convertToJson);
+        //
+        if (response.status === "200")
+            localStorage.set('user',response.user); //Or a cookie
+        //Redirection send an error
+        console.log(response);
+        return response;//.accessToken;
     }
 }
