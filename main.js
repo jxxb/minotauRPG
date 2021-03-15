@@ -24,7 +24,7 @@ const scene = new Container();
 const textures = {
    character: new Texture('images/character/Character_base.png'),
    mino: new Texture('images/enemy/Enemy.png'),
-   sword: new Texture('images/weapons/sword_base-01.png'),
+   sword: new Texture('images/weapons/sword_up.png'),
    vWall: new Texture('images/wall/wall_vertical.png'),
    hWall: new Texture('images/wall/wall_horizontal.png')
 };
@@ -172,10 +172,12 @@ function spawnMino(x, y, speed) {
 }
 
 const sword = new Sprite(textures.sword);
+
+
 sword.pos.x = character.pos.x - 80;
 sword.pos.y = character.pos.y - 110;
 
-function drawSword() {
+function getWeapon() {
    sword.size.sx = 100;
    sword.size.sy = 100;
    sword.update = function (dt, t) {
@@ -195,7 +197,7 @@ function drawSword() {
          sword.pos.x = character.pos.x - 10;
          sword.pos.y = character.pos.y;
       } else if (controls.y == -1) {
-         textures.sword.img.src = 'images/weapons/sword_base-01.png'
+         textures.sword.img.src = 'images/weapons/sword_up.png'
          sword.pos.x = character.pos.x - 40;
          sword.pos.y = character.pos.y - 60;
       }
@@ -208,6 +210,7 @@ function drawSword() {
       }
    }
 }
+
 
 
 
@@ -232,8 +235,10 @@ function loopy(ms) {
    //game logic code
    //ctx.save();
    if (controls.action) {
-      drawSword();
+      getWeapon();
+      
       sword.visible = true;
+      console.log(sword);
    } else {
       sword.visible = false;
    }

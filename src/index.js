@@ -13,5 +13,5 @@ export default {
   Texture,
   Sprite,
   KeyControls,
-  ExternalServices
+  ExternalServices,
 };
