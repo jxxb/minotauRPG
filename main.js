@@ -128,18 +128,19 @@ function spawnMino(x, y, speed) {
    const mino = new Sprite(textures.mino);
    mino.pos.x = x;
    mino.pos.y = y;
-   mino.size.sx = 40;
-   mino.size.sy = 40;
+   mino.size.sx = 10;
+   mino.size.sy = 10;
    mino.moveVertical = true;
    mino.moveHorizontal = false;
+   let dx = 0;
+   let dy = 100;
    mino.update = function (dt) {
-      let dx = 0;
-      let dy = 0;
+     
       //let differenceX = Math.abs(character.pos.x - mino.pos.x);
       //let differenceY = Math.abs(character.pos.y - mino.pos.y);
       
-      console.log(mino.moveVertical);
-      if (mino.moveVertical) {
+      //console.log(mino.moveVertical);
+      /*if (mino.moveVertical) {
          if (character.pos.y > mino.pos.y) {
             dy = 100;
             textures.mino.img.src = 'images/enemy/Enemy.png';
@@ -157,7 +158,7 @@ function spawnMino(x, y, speed) {
             textures.mino.img.src = 'images/enemy/Enemy-right.png'
          }
          dy = 0;
-      }
+      }*/
       
       mino.pos.x += dt * dx;
       mino.pos.y += dt * dy;
@@ -294,11 +295,38 @@ function loopy(ms) {
          const colisionXDistance = Math.abs(hWall.size.sx / 2 + mino.size.sx / 2);
          const colisionX = (hWall.pos.x + (hWall.size.sx / 2)) - (mino.pos.x + (hWall.size.sx / 2)); // y colision area
          const colisionY = (hWall.pos.y + (hWall.size.sy / 2)) - (mino.pos.y + (hWall.size.sy / 2));
-
-         if (Math.abs(colisionX) <= colisionXDistance && Math.abs(colisionY) <= colisionYDistance * 1.65) {
-            //mino.pos.y -= hWall.size.sy / 2;
-            mino.moveVertical = !mino.moveVertical;
-            mino.moveHorizontal = !mino.moveHorizontal;
+         
+         
+         if (hWall.pos.y > mino.pos.y) {
+            if (Math.abs(colisionX) <= colisionXDistance && Math.abs(colisionY) <= colisionYDistance * 1.65) {
+               console.log("hWall colision");
+               mino.pos.y -= hWall.size.sy / 2;
+               
+               mino.moveHorizontal = false;
+               mino.dx = 0;
+               if (Math.random() > 0.5) {
+                  console.log("move up");
+                  mino.moveVertical = true;
+                  mino.dy = 100;
+               } else {
+                  console.log("move down");
+                  mino.moveVertical = true;
+                  mino.dy = -100;
+               }
+            }
+         } else if (hWall.pos.y < mino.pos.y) {
+            if (Math.abs(colisionX) <= colisionXDistance && Math.abs(colisionY) <= colisionYDistance * 1.65) {
+               mino.moveHorizontal = false;
+               mino.pos.y += hWall.size.sy / 2;
+               mino.dx = 0;
+               if (Math.random() > 0.5) {
+                  mino.moveVertical = true;
+                  mino.dy = 100;
+               } else {
+                  mino.moveVertical = true;
+                  mino.dy = -100;
+               }
+            }
          }
       });
 
@@ -310,10 +338,35 @@ function loopy(ms) {
          const colisionX = (vWall.pos.x + (vWall.size.sx / 2)) - (mino.pos.x + (vWall.size.sx / 2)); // y colision area
          const colisionY = (vWall.pos.y + (vWall.size.sy / 2)) - (mino.pos.y + (vWall.size.sy / 2));
 
-         if (Math.abs(colisionY) <= Math.abs(colisionYDistance) && Math.abs(colisionX) <= Math.abs(colisionXDistance / 3)) {
-            //mino.pos.x += vWall.size.sx / 2;
-            mino.moveVertical = !mino.moveVertical;
-            mino.moveHorizontal = !mino.moveHorizontal;
+         if (vWall.pos.y > mino.pos.y) {
+            
+            if (Math.abs(colisionX) <= colisionXDistance && Math.abs(colisionY) <= colisionYDistance * 1.65) {
+               mino.moveVertical = false;
+               mino.pos.y -= vWall.size.sy / 2;
+               mino.dy = 0;
+               if (Math.random() > 0.5) {
+                  mino.moveHorizontal = true;
+                  mino.dx = 100;
+                  console.log("move right");
+               } else {
+                  mino.moveHorizontal = true;
+                  mino.dx = -100;
+                  console.log("move left");
+               }
+            }
+         } else if (vWall.pos.y < mino.pos.y) {
+            if (Math.abs(colisionX) <= colisionXDistance && Math.abs(colisionY) <= colisionYDistance * 1.65) {
+               mino.moveVertical = false;
+               mino.pos.y += vWall.size.sy / 2;
+               mino.dy = 0;
+               if (Math.random() > 0.5) {
+                  mino.moveHorizontal = true;
+                  mino.dx = 100;
+               } else {
+                  mino.moveHorizontal = true;
+                  mino.dx = -100;
+               }
+            }
          }
       });
 
