@@ -33,8 +33,8 @@ const maze = new ExternalServices();
 const character = new Sprite(textures.character);
 character.pos.x = 120;
 character.pos.y = 400;
-character.size.sx = 45;
-character.size.sy = 45;
+character.size.sx = 40;
+character.size.sy = 40;
 character.update = function (dt, t) {
    this.pos.x += controls.x * dt * 200;
    this.pos.y += controls.y * dt * 200;
@@ -69,7 +69,7 @@ function spawnVWalls(x, y) {
    const vWall = new Sprite(textures.vWall);
    textures.vWall.img.src = 'images/wall/wall_vertical.png';
    vWall.size.sx = 15;
-   vWall.size.sy = 60;
+   vWall.size.sy = 65;
    vWall.pos.x = x + cellW;
    vWall.pos.y = y;
    vWalls.add(vWall);
@@ -128,43 +128,37 @@ function spawnMino(x, y, speed) {
    const mino = new Sprite(textures.mino);
    mino.pos.x = x;
    mino.pos.y = y;
-   mino.size.sx = 45;
-   mino.size.sy = 45;
+   mino.size.sx = 40;
+   mino.size.sy = 40;
+   mino.moveVertical = true;
+   mino.moveHorizontal = false;
    mino.update = function (dt) {
       let dx = 0;
       let dy = 0;
-
-      //mino attraction to character
-      let differenceX = Math.abs(character.pos.x - mino.pos.x);
-      let differenceY = Math.abs(character.pos.y - mino.pos.y);
-
-      if (differenceX > differenceY) {
-         // mino.size.sx = 45;
-         // mino.size.sy = 54;
-         if (character.pos.x < mino.pos.x) {
-            dx = -100;
-        
-            textures.mino.img.src = 'images/enemy/Enemy-left.png'
-         } else if (character.pos.x > mino.pos.x) {
-            dx = 100;
-          
-            textures.mino.img.src = 'images/enemy/Enemy-right.png'
-         }
-         dy = 0;
-      } else if (differenceX < differenceY) {
-         // mino.size.sx = 54;
-         // mino.size.sy = 45;
-         if (character.pos.y < mino.pos.y) {
-            dy = -100;
-            textures.mino.img.src = 'images/enemy/Enemy.png'
-         } else if (character.pos.y > mino.pos.y) {
+      //let differenceX = Math.abs(character.pos.x - mino.pos.x);
+      //let differenceY = Math.abs(character.pos.y - mino.pos.y);
+      
+      console.log(mino.moveVertical);
+      if (mino.moveVertical) {
+         if (character.pos.y > mino.pos.y) {
             dy = 100;
-         
+            textures.mino.img.src = 'images/enemy/Enemy.png';
+         } else if (character.pos.y < mino.pos.y) {
+            dy = -100;
             textures.mino.img.src = 'images/enemy/Enemy-down.png'
          }
          dx = 0;
+      } else if (mino.moveHorizontal) {
+         if (character.pos.x < mino.pos.x) {
+            dx = -100;
+            textures.mino.img.src = 'images/enemy/Enemy-left.png';
+         }  else if (character.pos.x > mino.pos.x) {
+            dx = 100;
+            textures.mino.img.src = 'images/enemy/Enemy-right.png'
+         }
+         dy = 0;
       }
-
+      
       mino.pos.x += dt * dx;
       mino.pos.y += dt * dy;
    };
@@ -239,61 +233,10 @@ function loopy(ms) {
    }
 
    //spawn minos
-   if (minows.children.length < 3) {
+   if (minows.children.length < 1) {
       spawnMino(getRandomIntInclusive(100, 600), getRandomIntInclusive(100, 500), 0);
    }
-
-   //replace 1 with the length of the array of cells we get from the backend team
-   //spawn vertical walls
-   // if (vWalls.children.length < 1) {
-   //    //x and y will be replaced by the locations of the cells sent from the back end team
-   //    spawnVWalls(0,0);
-   //    spawnVWalls(0,100);
-   //    spawnVWalls(0,200);
-   //    spawnVWalls(0,300);
-   //    spawnVWalls(0,400);
-   //    spawnVWalls(0,500);
-   //    spawnVWalls(0,600);
-   //    spawnVWalls(0,700);
-
-   //    spawnVWalls(780,0);
-   //    spawnVWalls(780,100);
-   //    spawnVWalls(780,200);
-   //    spawnVWalls(780,300);
-   //    spawnVWalls(780,400);
-   //    spawnVWalls(780,500);
-   //    spawnVWalls(780,600);
-   //    spawnVWalls(780,700);
-
-   //    spawnVWalls(430,150);
-
-   // }
-
-   // //spawn horizontal walls
-   // if (hWalls.children.length < 1) {
-   //    spawnHWalls(0,0);
-   //    spawnHWalls(100,0);
-   //    spawnHWalls(200,0);
-   //    spawnHWalls(300,0);
-   //    spawnHWalls(400,0);
-   //    spawnHWalls(500,0);
-   //    spawnHWalls(600,0);
-   //    spawnHWalls(700,0);
-
-   //    spawnHWalls(0,580);
-   //    spawnHWalls(100,580);
-   //    spawnHWalls(200,580);
-   //    spawnHWalls(300,580);
-   //    spawnHWalls(400,580);
-   //    spawnHWalls(500,580);
-   //    spawnHWalls(600,580);
-   //    spawnHWalls(700,580);
-
-   //    spawnHWalls(0,100);
-   //    spawnHWalls(100,100);
-   //    spawnHWalls(330,400);
-   // }
-
+   
    //horizontal character wall colision detection
    hWalls.children.forEach((hWall) => {
 
@@ -304,9 +247,9 @@ function loopy(ms) {
 
       if (Math.abs(colisionX) <= Math.abs(colisionXDistance) && Math.abs(colisionY) <= Math.abs(colisionYDistance * .9)) {
          if (hWall.pos.y < character.pos.y) {
-            character.pos.y += hWall.size.sy / 6;
+            character.pos.y += hWall.size.sy / 4;
          } else if (hWall.pos.y > character.pos.y) {
-            character.pos.y -= hWall.size.sy / 6;
+            character.pos.y -= hWall.size.sy / 4;
          }
       }
    });
@@ -321,14 +264,14 @@ function loopy(ms) {
 
       if (Math.abs(colisionY) <= Math.abs(colisionYDistance) && Math.abs(colisionX) <= Math.abs(colisionXDistance * .9)) {
          if (vWall.pos.x < character.pos.x) {
-            character.pos.x += vWall.size.sx / 6;
+            character.pos.x += vWall.size.sx / 4;
          } else if (vWall.pos.x > character.pos.x) {
-            character.pos.x -= vWall.size.sx / 6;
+            character.pos.x -= vWall.size.sx / 4;
          }
       }
    });
 
-   //enemy sword collision detection
+   //mino character colision detection
    minows.children.forEach((mino) => {
       let dx = mino.pos.x + mino.size.sx / 2 - (character.pos.x + character.size.sx / 2);
       let dy = mino.pos.y + mino.size.sy / 2 - (character.pos.y + character.size.sy / 2);
@@ -337,6 +280,7 @@ function loopy(ms) {
          //character.dead = true;
       }
 
+      //enemy sword collision detection
       dx = mino.pos.x + mino.size.sx / 2 - (sword.pos.x + sword.size.sx / 2);
       dy = mino.pos.y + mino.size.sy / 2 - (sword.pos.y + sword.size.sy / 2);
       if (sword.visible && Math.sqrt(dx * dx + dy * dy) < (mino.size.sx / 2 + sword.size.sx / 2)) {
@@ -351,16 +295,10 @@ function loopy(ms) {
          const colisionX = (hWall.pos.x + (hWall.size.sx / 2)) - (mino.pos.x + (hWall.size.sx / 2)); // y colision area
          const colisionY = (hWall.pos.y + (hWall.size.sy / 2)) - (mino.pos.y + (hWall.size.sy / 2));
 
-         if (hWall.pos.y > mino.pos.y) {
-            if (Math.abs(colisionX) <= colisionXDistance && Math.abs(colisionY) <= colisionYDistance * 1.65) {
-               mino.pos.y -= hWall.size.sy / 8;
-            }
-         }
-
-         if (hWall.pos.y < mino.pos.y) {
-            if (Math.abs(colisionX) <= colisionXDistance && Math.abs(colisionY) <= colisionYDistance / 3) {
-               mino.pos.y += hWall.size.sy / 8;
-            }
+         if (Math.abs(colisionX) <= colisionXDistance && Math.abs(colisionY) <= colisionYDistance * 1.65) {
+            //mino.pos.y -= hWall.size.sy / 2;
+            mino.moveVertical = !mino.moveVertical;
+            mino.moveHorizontal = !mino.moveHorizontal;
          }
       });
 
@@ -372,16 +310,10 @@ function loopy(ms) {
          const colisionX = (vWall.pos.x + (vWall.size.sx / 2)) - (mino.pos.x + (vWall.size.sx / 2)); // y colision area
          const colisionY = (vWall.pos.y + (vWall.size.sy / 2)) - (mino.pos.y + (vWall.size.sy / 2));
 
-         if (vWall.pos.x < mino.pos.x) {
-            if (Math.abs(colisionY) <= Math.abs(colisionYDistance) && Math.abs(colisionX) <= Math.abs(colisionXDistance / 3)) {
-               mino.pos.x += vWall.size.sx / 8;
-            }
-         }
-
-         if (vWall.pos.x > mino.pos.x) {
-            if (Math.abs(colisionY) <= Math.abs(colisionYDistance) && Math.abs(colisionX) <= Math.abs(colisionXDistance * 1.65)) {
-               mino.pos.x -= vWall.size.sx / 8;
-            }
+         if (Math.abs(colisionY) <= Math.abs(colisionYDistance) && Math.abs(colisionX) <= Math.abs(colisionXDistance / 3)) {
+            //mino.pos.x += vWall.size.sx / 2;
+            mino.moveVertical = !mino.moveVertical;
+            mino.moveHorizontal = !mino.moveHorizontal;
          }
       });
 
