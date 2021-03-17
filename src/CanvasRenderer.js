@@ -28,6 +28,8 @@ class CanvasRenderer {
             ctx.fillText(child.text, 0, 0);
           } else if (child.texture) {
             ctx.drawImage(child.texture.img, 0, 0, child.size.sx, child.size.sy);
+          } else if (child.box) {
+            
           }
           // Handle the child types
           if (child.children) {
