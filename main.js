@@ -1,4 +1,5 @@
 import src from './src/index.js';
+//Objects
 
 const {
    CanvasRenderer,
@@ -7,7 +8,8 @@ const {
    Texture,
    Sprite,
    Container,
-   ExternalServices
+   ExternalServices,
+   User
 } = src;
 
 //game setup
@@ -21,6 +23,7 @@ const renderer = new CanvasRenderer(w, h);
 document.querySelector('#board').appendChild(renderer.view);
 const controls = new KeyControls();
 const scene = new Container();
+const user = new User();
 const textures = {
    character: new Texture('images/character/Character_base.png'),
    mino: new Texture('images/enemy/Enemy.png'),
@@ -88,7 +91,8 @@ function spawnHWalls(x, y) {
 }
 
 function walls() {
-   maze.getMaze().then(mazeWalls => {
+
+   maze.getMaze(user.getActualMazeId()).then(mazeWalls => {
          for (let i = 0; i < mazeWalls.length; i++) {
             for (let j = 0; j < mazeWalls[i].length; j++) {
                //type 1 = br
