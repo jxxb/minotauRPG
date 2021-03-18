@@ -5,6 +5,7 @@ import Texture from "./Texture.js";
 import Sprite from "./Sprite.js";
 import KeyControls from "./KeyControls.js";
 import ExternalServices from "./ExternalServices.js";
+import Rectangle from "./Rectangle.js";
 
 export default {
   Container,
@@ -14,4 +15,5 @@ export default {
   Sprite,
   KeyControls,
   ExternalServices,
+  Rectangle
 };

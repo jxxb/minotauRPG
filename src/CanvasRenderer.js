@@ -28,6 +28,19 @@ class CanvasRenderer {
             ctx.fillText(child.text, 0, 0);
           } else if (child.texture) {
             ctx.drawImage(child.texture.img, 0, 0, child.size.sx, child.size.sy);
+          } else if (!child.text && !child.texture) {
+            
+            let health = 200
+            if (child.health > health *.6) {
+              ctx.fillStyle = 'rgba(0,225,0,0.75)';
+              ctx.fillRect(child.x, child.y, child.health/4, 10);
+            } else if (child.health < health *.6 && child.health > health *.3) {
+              ctx.fillStyle = 'rgba(255,255,0,0.75)';
+              ctx.fillRect(child.x, child.y, child.health/4, 10);
+            } else if (child.health < health *.3) {
+              ctx.fillStyle = 'rgba(225,0,0,0.75)';
+              ctx.fillRect(child.x, child.y, child.health/4, 10);
+            } 
           } else if (child.box) {
             
           }
