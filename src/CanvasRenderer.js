@@ -41,6 +41,8 @@ class CanvasRenderer {
               ctx.fillStyle = 'rgba(225,0,0,0.75)';
               ctx.fillRect(child.x, child.y, child.health/4, 10);
             } 
+          } else if (child.box) {
+            
           }
           // Handle the child types
           if (child.children) {

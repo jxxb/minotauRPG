@@ -23,13 +23,27 @@ document.querySelector('#board').appendChild(renderer.view);
 const controls = new KeyControls();
 const scene = new Container();
 const textures = {
+   inventory: drawInventory(),
    character: new Texture('images/character/Character_base.png'),
    mino: new Texture('images/enemy/Enemy.png'),
-   sword: new Texture('images/weapons/sword_base-01.png'),
+   sword: new Texture('images/weapons/sword_up.png'),
+   axe: new Texture('images/weapons/axe_base.png'),
    vWall: new Texture('images/wall/wall_vertical.png'),
    hWall: new Texture('images/wall/wall_horizontal.png'),
 };
 const maze = new ExternalServices();
+
+function drawInventory() {
+   renderer.ctx.strokeStyle = 'black';
+   renderer.ctx.fillStyle = 'rgba(225,180,150,0.75)';
+   renderer.ctx.strokeRect(0, h-50, w, 50);
+   renderer.ctx.fillRect(0, h-50, w, 50);
+   console.log('it drew me!');
+}
+
+const inventory = new Container();
+const inventoryBackground = new Sprite(textures.inventory);
+
 
 const character = new Sprite(textures.character);
 character.pos.x = 120;
@@ -107,6 +121,8 @@ function spawnHWalls(x, y) {
    hWalls.add(hWall);
 }
 
+const enemyWeapons = new Container();
+
 function walls() {
    maze.getMaze().then(mazeWalls => {
       for (let i = 0; i < mazeWalls.length; i++) {
@@ -136,9 +152,12 @@ function walls() {
          scene.add(hWalls);
          scene.add(vWalls);
          scene.add(sword);
+         scene.add(enemyWeapons);
          scene.add(character);
          scene.add(minows);
          scene.add(healthBar);
+         scene.add(inventoryBackground);
+         scene.add(inventory);
       })
       .catch(err => console.log(err));
 }
@@ -194,10 +213,12 @@ function spawnMino(x, y, speed) {
 }
 
 const sword = new Sprite(textures.sword);
+
+
 sword.pos.x = character.pos.x - 80;
 sword.pos.y = character.pos.y - 110;
 
-function drawSword() {
+function getWeapon() {
    sword.size.sx = 100;
    sword.size.sy = 100;
    sword.update = function (dt, t) {
@@ -217,7 +238,7 @@ function drawSword() {
          sword.pos.x = character.pos.x - 10;
          sword.pos.y = character.pos.y;
       } else if (controls.y == -1) {
-         textures.sword.img.src = 'images/weapons/sword_base-01.png'
+         textures.sword.img.src = 'images/weapons/sword_up.png'
          sword.pos.x = character.pos.x - 40;
          sword.pos.y = character.pos.y - 60;
       }
@@ -230,6 +251,7 @@ function drawSword() {
       }
    }
 }
+
 
 
 
@@ -253,15 +275,17 @@ function loopy(ms) {
    last = t;
    //game logic code
    //ctx.save();
+   drawInventory();
    if (controls.action) {
-      drawSword();
+      getWeapon();
+      
       sword.visible = true;
    } else {
       sword.visible = false;
    }
 
    //spawn minos
-   if (minows.children.length < 50) {
+   if (minows.children.length < 3) {
       spawnMino(getRandomIntInclusive(100, 600), getRandomIntInclusive(100, 500), 0);
    }
 
@@ -320,8 +344,32 @@ function loopy(ms) {
       dx = mino.pos.x + mino.size.sx / 2 - (sword.pos.x + sword.size.sx / 2);
       dy = mino.pos.y + mino.size.sy / 2 - (sword.pos.y + sword.size.sy / 2);
       if (sword.visible && Math.sqrt(dx * dx + dy * dy) < (mino.size.sx / 2 + sword.size.sx / 2)) {
+
+         //drop axe
+         const axe = new Sprite(textures.axe);
+         enemyWeapons.add(axe);
+         axe.pos.x = mino.pos.x;
+         axe.pos.y = mino.pos.y;
+         axe.size.sx = 50;
+         axe.size.sy = 100;
+         axe.visible = true;
          mino.dead = true;
       }
+
+      enemyWeapons.children.forEach((weapon) => {
+         let dx = weapon.pos.x + weapon.size.sx / 3 - (character.pos.x + character.size.sx / 2);
+         let dy = weapon.pos.y + weapon.size.sy / 3 - (character.pos.y + character.size.sy / 2);
+
+         if (Math.sqrt(dx * dx + dy * dy) < (weapon.size.sx / 3 + character.size.sx / 2)) {
+            
+            inventory.add(weapon);
+            inventory.children.forEach((item) => {
+               item.pos.y = h - 50;
+            })
+            enemyWeapons.remove(weapon);
+            // weapon.visible = false;
+         };
+      })
 
       //mino - horizontal wall colision detection
       hWalls.children.forEach((hWall) => {
@@ -381,9 +429,10 @@ function loopy(ms) {
          }
       });
    });
-
+ 
    scene.update(dt, t);
    renderer.render(scene);
+   drawInventory();
 }
 
 requestAnimationFrame(loopy);
