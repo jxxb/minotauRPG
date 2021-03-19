@@ -9,7 +9,6 @@ class CanvasRenderer {
     }
     render(container, clear = true) {
       const { ctx } = this;
-      const img = child.texture.img;
       function renderRec(container) {
         // Render the container children
         container.children.forEach((child) => {
@@ -27,11 +26,8 @@ class CanvasRenderer {
             if (fill) ctx.fillStyle = fill;
             if (align) ctx.textAlign = align;
             ctx.fillText(child.text, 0, 0);
-          } else if (child.texture) {
-            ctx.drawImage(child.texture.img, 0, 0, child.size.sx, child.size.sy);
-          } 
-
-          if (child.tileW) {
+          } else if (child.tileW) {
+            const img = child.texture.img;
             ctx.drawImage(
               img,
               child.frame.x * child.tileW, //source x
@@ -40,9 +36,13 @@ class CanvasRenderer {
               0,0,                         //destination x & y
               child.tileW, child.tileH     //destination width & height
             );
-          } else {
-            ctx.drawImage(img, 0, 0);
-          }
+          } 
+          else if (child.texture) {
+            ctx.drawImage(child.texture.img, 0, 0, child.size.sx, child.size.sy);
+          } 
+          // else {
+          //   ctx.drawImage(img, 0, 0);
+          // }
           // Handle the child types
           if (child.children) {
             renderRec(child);

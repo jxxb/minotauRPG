@@ -19,6 +19,7 @@ const rows = 10;
 const cellW = w / columns;
 const cellH = h / rows;
 let itemMultiple = 0;
+
 const renderer = new CanvasRenderer(w, h);
 document.querySelector('#board').appendChild(renderer.view);
 const controls = new KeyControls();
@@ -36,8 +37,11 @@ const textures = {
    weaponTiles: new Texture('images/weapons/weapons_sprite.png')
 };
 const maze = new ExternalServices();
-const weaponTile = new TileSprite(textures.weaponTiles,0,0);
 
+
+const enemyWeapons = new Container();
+const weapon = new TileSprite(textures.weaponTiles, 135, 135);
+console.log(weapon);
 // function drawInventory() {
 //    renderer.ctx.strokeStyle = 'black';
 //    renderer.ctx.fillStyle = 'rgba(225,180,150,0.75)';
@@ -113,7 +117,6 @@ function spawnHWalls(x, y) {
    hWalls.add(hWall);
 }
 
-const enemyWeapons = new Container();
 
 function walls() {
    maze.getMaze().then(mazeWalls => {
@@ -143,9 +146,9 @@ function walls() {
          }
          scene.add(hWalls);
          scene.add(vWalls);
-         scene.add(sword);
+         //scene.add(sword);
          scene.add(enemyWeapons);
-         scene.add(weaponTile);
+         scene.add(weapon);
          scene.add(character);
          scene.add(minows);
          scene.add(inventoryBackground);
@@ -203,7 +206,7 @@ function spawnMino(x, y, speed) {
    minows.add(mino);
 }
 
-const weapon = new Sprite(textures.weaponTile);
+
 
 
 weapon.pos.x = character.pos.x - 80;
@@ -215,23 +218,21 @@ function getWeapon() {
    weapon.update = function (dt, t) {
       this.pos.x += controls.x * dt * 200;
       this.pos.y += controls.y * dt * 200;
-
-     weaponTile
       
       if (controls.x == 1) {
-         textures.weapon.img.src = 'images/weapons/sword_right.png'
+         weapon.frame.x = 1; // right
          this.pos.x = character.pos.x;
          this.pos.y = character.pos.y - 40;
       } else if (controls.x == -1) {
-         textures.weapon.img.src = 'images/weapons/sword_left.png'
+        weapon.frame.x = 3; //left
          this.pos.x = character.pos.x - 60;
          this.pos.y = character.pos.y - 10;
       } else if (controls.y == 1) {
-         textures.weapon.img.src = 'images/weapons/sword_down.png'
+         weapon.frame.x = 2; //down
          weapon.pos.x = character.pos.x - 10;
          weapon.pos.y = character.pos.y;
       } else if (controls.y == -1) {
-         textures.weapon.img.src = 'images/weapons/sword_up.png'
+         weapon.frame.x = 0;  //up
          weapon.pos.x = character.pos.x - 40;
          weapon.pos.y = character.pos.y - 60;
       }
@@ -330,23 +331,17 @@ function loopy(ms) {
       if (weapon.visible && Math.sqrt(dx * dx + dy * dy) < (mino.size.sx / 2 + weapon.size.sx / 2)) {
 
          //drop axe
+         const item = new TileSprite(textures.weaponTiles,137,137);
          let thing = null;
-         switch(getRandomIntInclusive(1,4)) {
-            case 1: thing = textures.axe;
-            break;
-            case 2: thing = textures.mace;
-            break;
-            case 3: thing = textures.spear;
-            break;
-            case 4: thing = textures.sword;
-            break;
-         }
+         
+           
 
-         const item = new Sprite(thing);
+         
          enemyWeapons.add(item);
          item.pos.x = mino.pos.x;
          item.pos.y = mino.pos.y;
-         item.size.sx = 50;
+         item.frame.y = getRandomIntInclusive(0,3);
+         item.size.sx = 100;
          item.size.sy = 100;
          item.visible = true;
          mino.dead = true;
@@ -363,21 +358,20 @@ function loopy(ms) {
                console.log(weapon.Texture);
             })) {
 
-               let inventoryLocation = 0;
+               let inventoryLocation = 10;
 
-               weapon.inventory
+               //weapon.inventory
                 inventory.add(weapon);
-                
                 inventory.children.forEach((item) => {
               
                
                if(item) {
-               item.pos.x = inventoryLocation + 60; 
-               item.pos.y = h - 80;
+               item.pos.x = inventoryLocation; 
+               item.pos.y = h - 120;
+               item.size.sx = 50;
+               item.size.sy = 50;
                }
-               
-
-               inventoryLocation+=60;
+               inventoryLocation+=90;
             }) 
             } else {
                itemMultiple++;
