@@ -9,6 +9,7 @@ class CanvasRenderer {
     }
     render(container, clear = true) {
       const { ctx } = this;
+      const img = child.texture.img;
       function renderRec(container) {
         // Render the container children
         container.children.forEach((child) => {
@@ -28,8 +29,19 @@ class CanvasRenderer {
             ctx.fillText(child.text, 0, 0);
           } else if (child.texture) {
             ctx.drawImage(child.texture.img, 0, 0, child.size.sx, child.size.sy);
-          } else if (child.box) {
-            
+          } 
+
+          if (child.tileW) {
+            ctx.drawImage(
+              img,
+              child.frame.x * child.tileW, //source x
+              child.frame.y * child.tileH, //source y
+              child.tileW, child.tileH,    //width & height
+              0,0,                         //destination x & y
+              child.tileW, child.tileH     //destination width & height
+            );
+          } else {
+            ctx.drawImage(img, 0, 0);
           }
           // Handle the child types
           if (child.children) {
