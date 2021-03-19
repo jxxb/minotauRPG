@@ -6,6 +6,7 @@ import Sprite from "./Sprite.js";
 import KeyControls from "./KeyControls.js";
 import ExternalServices from "./ExternalServices.js";
 import TileSprite from "./TileSprite.js";
+import User from "./User.js";
 
 export default {
   Container,
@@ -15,5 +16,6 @@ export default {
   Sprite,
   KeyControls,
   ExternalServices,
-  TileSprite
+  TileSprite,
+  User
 };

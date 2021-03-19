@@ -1,4 +1,5 @@
 const base_url = "http://backendminotaurpg.herokuapp.com/";
+//const base_url = "http://localhost:3000/";
 
 function convertToJson(jeff) {
     if (jeff.ok) return jeff.json();
@@ -12,22 +13,20 @@ function convertToJson(jeff) {
 export default class ExternalServices {
     constructor() {}
 
-    async getMaze() {
+    async getMaze(mazeId,userId = "") {
         const options = {
-            method: 'PATCH',
+            method: 'PUT',
             body:JSON.stringify({
-                h: 10,
-                w: 10,
-                userId: '604c0eb343a5ae00041ac9a8'
+                gameId: mazeId
             }),
             headers: {
                 'Content-Type':'application/json'
             },
         };
     
-        const APIResponse = await fetch(base_url + 'newGame', options).then(convertToJson);
+        const APIResponse = await fetch(base_url + 'loadGame', options).then(convertToJson);
         let gridArray = [];
-
+        console.log(APIResponse);
         APIResponse.maze.forEach((cell) => {
             if (cell.vertical && cell.horizontal) {
                // 'bottomRight'
@@ -113,10 +112,10 @@ export default class ExternalServices {
     
         const response = await fetch(base_url + 'signin', options).then(convertToJson);
         //
-        if (response.status === "200")
-            localStorage.set('user',response.user); //Or a cookie
+        if (response.status === 200)
+            localStorage.setItem('user',JSON.stringify(response.user)); //Or a cookie
         //Redirection send an error
-        console.log(response);
+
         return response;//.accessToken;
     }
 
@@ -130,11 +129,11 @@ export default class ExternalServices {
         };
     
         const response = await fetch(base_url + 'signup', options).then(convertToJson);
-        //
-        if (response.status === "200")
-            localStorage.set('user',response.user); //Or a cookie
+        if (response.status == 200)
+            localStorage.setItem('user',JSON.stringify(response.user)); //Or a cookie
         //Redirection send an error
         console.log(response);
         return response;//.accessToken;
     }
+
 }
