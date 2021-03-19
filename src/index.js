@@ -7,6 +7,7 @@ import KeyControls from "./KeyControls.js";
 import ExternalServices from "./ExternalServices.js";
 import TileSprite from "./TileSprite.js";
 import User from "./User.js";
+import Rectangle from "./Rectangle.js";
 
 export default {
   Container,
@@ -17,5 +18,6 @@ export default {
   KeyControls,
   ExternalServices,
   TileSprite,
-  User
+  User,
+  Rectangle
 };

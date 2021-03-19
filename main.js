@@ -10,7 +10,8 @@ const {
    Container,
    ExternalServices,
    TileSprite,
-   User
+   User,
+   Rectangle
 } = src;
 
 //game setup
@@ -68,10 +69,15 @@ character.pos.x = 120;
 character.pos.y = 400;
 character.size.sx = 45;
 character.size.sy = 45;
+character.health = 200;
+character.center.x = character.pos.x + character.size.sx/2;
+character.center.y = character.pos.y + character.size.sy/2;
+
 character.update = function (dt, t) {
    this.pos.x += controls.x * dt * 200;
    this.pos.y += controls.y * dt * 200;
-
+   this.center.x = this.pos.x + this.size.sx/2;
+   this.center.y = this.pos.y + this.size.sy/2;
    if (controls.x == 1) {
       textures.character.img.src = 'images/character/Character_right.png';
    } else if (controls.x == -1) {
@@ -96,6 +102,16 @@ character.update = function (dt, t) {
    }
 }
 
+const healthBar = new Rectangle();
+healthBar.health = character.health;
+healthBar.x = character.pos.x;
+healthBar.y = character.pos.y;
+
+healthBar.update = function (dt) {
+   healthBar.x = character.pos.x - healthBar.health/8 + (character.size.sx/2);
+   healthBar.y = character.pos.y - 20;
+}
+
 const vWalls = new Container();
 
 function spawnVWalls(x, y) {
@@ -105,6 +121,8 @@ function spawnVWalls(x, y) {
    vWall.size.sy = 60;
    vWall.pos.x = x + cellW;
    vWall.pos.y = y;
+   vWall.center.x = vWall.pos.x + vWall.size.sx/2;
+   vWall.center.y = vWall.pos.y + vWall.size.sy/2;
    vWalls.add(vWall);
 }
 
@@ -117,6 +135,8 @@ function spawnHWalls(x, y) {
    hWall.size.sy = 15;
    hWall.pos.x = x;
    hWall.pos.y = y + cellH;
+   hWall.center.x = hWall.pos.x + hWall.size.sx/2;
+   hWall.center.y = hWall.pos.y + hWall.size.sy/2;
    hWalls.add(hWall);
 }
 
@@ -144,7 +164,7 @@ function walls() {
                }
                //type 4 = empty
                else {
-
+                  
                }
             }
          }
@@ -155,6 +175,7 @@ function walls() {
          scene.add(weapon);
          scene.add(character);
          scene.add(minows);
+         scene.add(healthBar);
          scene.add(inventoryBackground);
          scene.add(inventory);
       })
@@ -167,12 +188,16 @@ function spawnMino(x, y, speed) {
    const mino = new Sprite(textures.mino);
    mino.pos.x = x;
    mino.pos.y = y;
-   mino.size.sx = 45;
-   mino.size.sy = 45;
+   mino.size.sx = 30;
+   mino.size.sy = 30;
+   mino.center.x = mino.pos.x + mino.size.sx/2;
+   mino.center.y = mino.pos.y + mino.size.sy/2;
+   mino.health = 100;
    mino.update = function (dt) {
       let dx = 0;
       let dy = 0;
-
+      mino.center.x = mino.pos.x + mino.size.sx/2;
+      mino.center.y = mino.pos.y + mino.size.sy/2;
       //mino attraction to character
       let differenceX = Math.abs(character.pos.x - mino.pos.x);
       let differenceY = Math.abs(character.pos.y - mino.pos.y);
@@ -182,11 +207,9 @@ function spawnMino(x, y, speed) {
          // mino.size.sy = 54;
          if (character.pos.x < mino.pos.x) {
             dx = -100;
-        
             textures.mino.img.src = 'images/enemy/Enemy-left.png'
          } else if (character.pos.x > mino.pos.x) {
             dx = 100;
-          
             textures.mino.img.src = 'images/enemy/Enemy-right.png'
          }
          dy = 0;
@@ -198,7 +221,6 @@ function spawnMino(x, y, speed) {
             textures.mino.img.src = 'images/enemy/Enemy.png'
          } else if (character.pos.y > mino.pos.y) {
             dy = 100;
-         
             textures.mino.img.src = 'images/enemy/Enemy-down.png'
          }
          dx = 0;
@@ -292,14 +314,17 @@ function loopy(ms) {
 
       const colisionYDistance = hWall.size.sy / 2 + character.size.sy / 2;
       const colisionXDistance = hWall.size.sx / 2 + character.size.sx / 2;
-      const colisionX = (hWall.pos.x + (hWall.size.sx / 2)) - (character.pos.x + (character.size.sx / 2)); // y colision area
-      const colisionY = (hWall.pos.y + (hWall.size.sy / 2)) - (character.pos.y + (character.size.sy / 2));
+      let colisionX = (hWall.pos.x + (hWall.size.sx / 2)) - (character.pos.x + (character.size.sx / 2)); // y colision area
+      let colisionY = (hWall.pos.y + (hWall.size.sy / 2)) - (character.pos.y + (character.size.sy / 2));
+
+      colisionX *= 1.2;
+      colisionY *= 1.2;
 
       if (Math.abs(colisionX) <= Math.abs(colisionXDistance) && Math.abs(colisionY) <= Math.abs(colisionYDistance * .9)) {
          if (hWall.pos.y < character.pos.y) {
-            character.pos.y += hWall.size.sy / 6;
+            character.pos.y += hWall.size.sy / 4;
          } else if (hWall.pos.y > character.pos.y) {
-            character.pos.y -= hWall.size.sy / 6;
+            character.pos.y -= hWall.size.sy / 4;
          }
       }
    });
@@ -309,14 +334,16 @@ function loopy(ms) {
 
       const colisionYDistance = vWall.size.sy / 2 + character.size.sy / 2;
       const colisionXDistance = vWall.size.sx / 2 + character.size.sx / 2;
-      const colisionX = (vWall.pos.x + (vWall.size.sx / 2)) - (character.pos.x + (character.size.sx / 2)); // y colision area
-      const colisionY = (vWall.pos.y + (vWall.size.sy / 2)) - (character.pos.y + (character.size.sy / 2));
+      let colisionX = (vWall.pos.x + (vWall.size.sx / 2)) - (character.pos.x + (character.size.sx / 2)); // y colision area
+      let colisionY = (vWall.pos.y + (vWall.size.sy / 2)) - (character.pos.y + (character.size.sy / 2));
+      colisionX *= 1.2;
+      colisionY *= 1.2;
 
       if (Math.abs(colisionY) <= Math.abs(colisionYDistance) && Math.abs(colisionX) <= Math.abs(colisionXDistance * .9)) {
          if (vWall.pos.x < character.pos.x) {
-            character.pos.x += vWall.size.sx / 6;
+            character.pos.x += vWall.size.sx / 4;
          } else if (vWall.pos.x > character.pos.x) {
-            character.pos.x -= vWall.size.sx / 6;
+            character.pos.x -= vWall.size.sx / 4;
          }
       }
    });
@@ -326,8 +353,12 @@ function loopy(ms) {
       let dx = mino.pos.x + mino.size.sx / 2 - (character.pos.x + character.size.sx / 2);
       let dy = mino.pos.y + mino.size.sy / 2 - (character.pos.y + character.size.sy / 2);
       if (Math.sqrt(dx * dx + dy * dy) < (mino.size.sx / 2 + character.size.sx / 2)) {
-         console.log("ew! he tuched me!");
-         //character.dead = true;
+         character.health -=1;
+         healthBar.health -=1;
+         //console.log(character.health);
+         if(character.health <= 0) {
+            //character.dead = true;
+         }
       }
 
       dx = mino.pos.x + mino.size.sx / 2 - (weapon.pos.x + weapon.size.sx / 2);
@@ -392,17 +423,18 @@ function loopy(ms) {
          //horizontal wall mino colision detection
          const colisionYDistance = Math.abs(hWall.size.sy / 2 + mino.size.sy / 2);
          const colisionXDistance = Math.abs(hWall.size.sx / 2 + mino.size.sx / 2);
-         const colisionX = (hWall.pos.x + (hWall.size.sx / 2)) - (mino.pos.x + (hWall.size.sx / 2)); // y colision area
-         const colisionY = (hWall.pos.y + (hWall.size.sy / 2)) - (mino.pos.y + (hWall.size.sy / 2));
-
+         let colisionX = (hWall.center.x + (hWall.size.sx / 2)) - (mino.center.x + (hWall.size.sx / 2)); // y colision area
+         let colisionY = (hWall.center.y + (hWall.size.sy / 2)) - (mino.center.y + (hWall.size.sy / 2));
+         colisionX *= 1.2;
+         colisionY *= 1.2;
          if (hWall.pos.y > mino.pos.y) {
-            if (Math.abs(colisionX) <= colisionXDistance && Math.abs(colisionY) <= colisionYDistance * 1.65) {
+            if (Math.abs(colisionX) <= colisionXDistance && Math.abs(colisionY) <= colisionYDistance) {
                mino.pos.y -= hWall.size.sy / 8;
             }
          }
 
          if (hWall.pos.y < mino.pos.y) {
-            if (Math.abs(colisionX) <= colisionXDistance && Math.abs(colisionY) <= colisionYDistance / 3) {
+            if (Math.abs(colisionX) <= colisionXDistance && Math.abs(colisionY) <= colisionYDistance) {
                mino.pos.y += hWall.size.sy / 8;
             }
          }
@@ -413,17 +445,18 @@ function loopy(ms) {
          //vertical wall mino colision detection
          const colisionYDistance = vWall.size.sy / 2 + mino.size.sy / 2;
          const colisionXDistance = vWall.size.sx / 2 + mino.size.sx / 2;
-         const colisionX = (vWall.pos.x + (vWall.size.sx / 2)) - (mino.pos.x + (vWall.size.sx / 2)); // y colision area
-         const colisionY = (vWall.pos.y + (vWall.size.sy / 2)) - (mino.pos.y + (vWall.size.sy / 2));
-
-         if (vWall.pos.x < mino.pos.x) {
-            if (Math.abs(colisionY) <= Math.abs(colisionYDistance) && Math.abs(colisionX) <= Math.abs(colisionXDistance / 3)) {
+         let colisionX = (vWall.center.x + (vWall.size.sx / 2)) - (mino.center.x + (vWall.size.sx / 2)); // y colision area
+         let colisionY = (vWall.center.y + (vWall.size.sy / 2)) - (mino.center.y + (vWall.size.sy / 2));
+         colisionX *= 1.2;
+         colisionY *= 1.2;
+         if (vWall.center.x < mino.center.x) {
+            if (Math.abs(colisionY) <= Math.abs(colisionYDistance) && Math.abs(colisionX) <= Math.abs(colisionXDistance)) {
                mino.pos.x += vWall.size.sx / 8;
             }
          }
 
-         if (vWall.pos.x > mino.pos.x) {
-            if (Math.abs(colisionY) <= Math.abs(colisionYDistance) && Math.abs(colisionX) <= Math.abs(colisionXDistance * 1.65)) {
+         if (vWall.center.x > mino.center.x) {
+            if (Math.abs(colisionY) <= Math.abs(colisionYDistance) && Math.abs(colisionX) <= Math.abs(colisionXDistance)) {
                mino.pos.x -= vWall.size.sx / 8;
             }
          }

@@ -43,6 +43,22 @@ class CanvasRenderer {
           // else {
           //   ctx.drawImage(img, 0, 0);
           // }
+          else if (!child.text && !child.texture) {
+            
+            let health = 200
+            if (child.health > health *.6) {
+              ctx.fillStyle = 'rgba(0,225,0,0.75)';
+              ctx.fillRect(child.x, child.y, child.health/4, 10);
+            } else if (child.health < health *.6 && child.health > health *.3) {
+              ctx.fillStyle = 'rgba(255,255,0,0.75)';
+              ctx.fillRect(child.x, child.y, child.health/4, 10);
+            } else if (child.health < health *.3) {
+              ctx.fillStyle = 'rgba(225,0,0,0.75)';
+              ctx.fillRect(child.x, child.y, child.health/4, 10);
+            } 
+          } else if (child.box) {
+            
+          }
           // Handle the child types
           if (child.children) {
             renderRec(child);
