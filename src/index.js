@@ -5,6 +5,8 @@ import Texture from "./Texture.js";
 import Sprite from "./Sprite.js";
 import KeyControls from "./KeyControls.js";
 import ExternalServices from "./ExternalServices.js";
+import TileSprite from "./TileSprite.js";
+import User from "./User.js";
 import Rectangle from "./Rectangle.js";
 import Setup from "./Setup.js";
 
@@ -17,5 +19,8 @@ export default {
   KeyControls,
   ExternalServices,
   Rectangle,
-  Setup
+  Setup,
+  TileSprite,
+  User,
+  Rectangle
 };

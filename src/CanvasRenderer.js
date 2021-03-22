@@ -26,9 +26,24 @@ class CanvasRenderer {
             if (fill) ctx.fillStyle = fill;
             if (align) ctx.textAlign = align;
             ctx.fillText(child.text, 0, 0);
-          } else if (child.texture) {
+          } else if (child.tileW) {
+            const img = child.texture.img;
+            ctx.drawImage(
+              img,
+              child.frame.x * child.tileW, //source x
+              child.frame.y * child.tileH, //source y
+              child.tileW, child.tileH,    //width & height
+              0,0,                         //destination x & y
+              child.tileW, child.tileH     //destination width & height
+            );
+          } 
+          else if (child.texture) {
             ctx.drawImage(child.texture.img, 0, 0, child.size.sx, child.size.sy);
-          } else if (!child.text && !child.texture) {
+          } 
+          // else {
+          //   ctx.drawImage(img, 0, 0);
+          // }
+          else if (!child.text && !child.texture) {
             
             let health = 200
             if (child.health > health *.6) {
