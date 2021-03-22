@@ -1,4 +1,5 @@
 const base_url = "http://backendminotaurpg.herokuapp.com/";
+import Setup from "./Setup.js";
 
 function convertToJson(jeff) {
     if (jeff.ok) return jeff.json();
@@ -9,6 +10,7 @@ function convertToJson(jeff) {
     }
 }
 
+    let setup = new Setup();
 export default class ExternalServices {
     constructor() {}
 
@@ -16,8 +18,10 @@ export default class ExternalServices {
         const options = {
             method: 'PATCH',
             body:JSON.stringify({
-                h: 10,
-                w: 10,
+                h: setup.getColumns,
+                w: setup.getRows,
+                cH: setup.getH,
+                cW: setup.getW,
                 userId: '604c0eb343a5ae00041ac9a8'
             }),
             headers: {

@@ -6,6 +6,7 @@ import Sprite from "./Sprite.js";
 import KeyControls from "./KeyControls.js";
 import ExternalServices from "./ExternalServices.js";
 import Rectangle from "./Rectangle.js";
+import Setup from "./Setup.js";
 
 export default {
   Container,
@@ -15,5 +16,6 @@ export default {
   Sprite,
   KeyControls,
   ExternalServices,
-  Rectangle
+  Rectangle,
+  Setup
 };

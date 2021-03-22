@@ -1,5 +1,5 @@
 import src from './src/index.js';
-import Rectangle from './src/Rectangle.js';
+// import Rectangle from './src/Rectangle.js';
 
 const {
    CanvasRenderer,
@@ -8,7 +8,9 @@ const {
    Texture,
    Sprite,
    Container,
-   ExternalServices
+   ExternalServices,
+   Rectangle,
+   Setup
 } = src;
 
 //game setup
