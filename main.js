@@ -44,7 +44,7 @@ const maze = new ExternalServices();
 
 
 const enemyWeapons = new Container();
-const weapon = new TileSprite(textures.weaponTiles, 135, 135);
+const weapon = new TileSprite(textures.weaponTiles, 137, 137);
 console.log(weapon);
 // function drawInventory() {
 //    renderer.ctx.strokeStyle = 'black';
@@ -60,6 +60,7 @@ inventoryBackground.pos.x = -5;
 inventoryBackground.pos.y = h - 96;
 inventoryBackground.size.sx = w + 15;
 inventoryBackground.size.sy = 100;
+
 
 
 
@@ -304,6 +305,15 @@ function loopy(ms) {
       weapon.visible = false;
    }
 
+   //Change weapon
+   if(controls.inventory>-1){
+      console.log(inventory.children[controls.inventory]);
+
+      if(inventory.children[controls.inventory]){
+         weapon.frame.y = inventory.children[controls.inventory].frame.y;
+      }
+   }
+
    //spawn minos
    if (minows.children.length < 3) {
       spawnMino(getRandomIntInclusive(100, 600), getRandomIntInclusive(100, 500), 0);
@@ -388,18 +398,29 @@ function loopy(ms) {
 
          if (Math.sqrt(dx * dx + dy * dy) < (weapon.size.sx / 3 + character.size.sx / 2)) {
             if(!inventory.children.some((item) => {
-               item.Texture === weapon.Texture
-               console.log(item.Texture);
-               console.log(weapon.Texture);
-            })) {
+               item.Texture === weapon.Texture;
+            })){ 
 
                let inventoryLocation = 10;
-
+   
                //weapon.inventory
-                inventory.add(weapon);
-                inventory.children.forEach((item) => {
-              
+               if(inventory.children.length < 8){
+                  if(inventory.children.length == 0){
+                     inventory.add(weapon);
+                  }
+                  
+               else {
+                  let alreadyThere = 0;
+                  inventory.children.forEach((item) => {
+               if(item.frame.y != weapon.frame.y){}
+               else{
+                  alreadyThere = 1;
+               }
                
+            })
+            if(alreadyThere != 1){inventory.add(weapon);}
+         }
+               inventory.children.forEach((item) => {
                if(item) {
                item.pos.x = inventoryLocation; 
                item.pos.y = h - 120;
@@ -411,6 +432,7 @@ function loopy(ms) {
             } else {
                itemMultiple++;
                console.log(itemMultiple);
+            }
             }
             
             enemyWeapons.remove(weapon);

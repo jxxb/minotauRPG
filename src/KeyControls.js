@@ -6,7 +6,7 @@ class KeyControls {
         "keydown",
         (e) => {
           if (
-            ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(e.key) >=
+            ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "1", "2","3","4"].indexOf(e.key) >=
             0
           ) {
             e.preventDefault();
@@ -49,6 +49,21 @@ class KeyControls {
       }
       return 0;
     }
+    get inventory(){
+      if(this.keys["1"]){
+        return 0;
+      }
+      else if(this.keys["2"]){
+        return 1;
+      }
+      else if(this.keys["3"]){
+        return 2;
+      }
+      else if(this.keys["4"]){
+        return 3;
+      }
+  }
+      
   }
   export default KeyControls;
   
