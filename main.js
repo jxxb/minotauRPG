@@ -45,7 +45,7 @@ const maze = new ExternalServices();
 
 const enemyWeapons = new Container();
 const weapon = new TileSprite(textures.weaponTiles, 137, 137);
-console.log(weapon);
+weapon.damage = 1;
 // function drawInventory() {
 //    renderer.ctx.strokeStyle = 'black';
 //    renderer.ctx.fillStyle = 'rgba(225,180,150,0.75)';
@@ -422,6 +422,7 @@ function loopy(ms) {
          }
                inventory.children.forEach((item) => {
                if(item) {
+               item.damage = item.frame.y +1;
                item.pos.x = inventoryLocation; 
                item.pos.y = h - 120;
                item.size.sx = 50;
