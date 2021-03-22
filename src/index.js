@@ -22,5 +22,4 @@ export default {
   Setup,
   TileSprite,
   User,
-  Rectangle
 };

@@ -14,7 +14,6 @@ const {
   Setup,
   TileSprite,
   User,
-  Rectangle
 } = src;
 
 //game setup
