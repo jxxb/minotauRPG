@@ -44,8 +44,8 @@ class CanvasRenderer {
           //   ctx.drawImage(img, 0, 0);
           // }
           else if (!child.text && !child.texture) {
-            
-            let health = 200
+            //console.log(child.health);
+            let health = child.startingHealth;
             if (child.health > health *.6) {
               ctx.fillStyle = 'rgba(0,225,0,0.75)';
               ctx.fillRect(child.x, child.y, child.health/4, 10);
