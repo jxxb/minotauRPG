@@ -1,5 +1,5 @@
 import src from './src/index.js';
-// import Rectangle from './src/Rectangle.js';
+
 //Objects
 
 const {
