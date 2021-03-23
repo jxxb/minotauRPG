@@ -80,6 +80,9 @@ character.center.y = character.pos.y + character.size.sy/2;
 character.update = function (dt, t) {
    this.pos.x += controls.x * dt * 200;
    this.pos.y += controls.y * dt * 200;
+   if (this.health < this.startingHealth) {
+      this.health += .1;
+   }
    this.center.x = this.pos.x + this.size.sx/2;
    this.center.y = this.pos.y + this.size.sy/2;
    if (controls.x == 1) {
@@ -115,6 +118,7 @@ healthBar.y = character.pos.y;
 healthBar.update = function (dt) {
    healthBar.x = character.pos.x - healthBar.health/8 + (character.size.sx/2);
    healthBar.y = character.pos.y - 20;
+   this.health = character.health;
 }
 
 const vWalls = new Container();
@@ -193,6 +197,7 @@ function spawnMino(x, y, speed) {
    const mino = new Sprite(textures.mino);
    mino.pos.x = x;
    mino.pos.y = y;
+   mino.damage = 2;
    mino.size.sx = 30;
    mino.size.sy = 30;
    mino.center.x = mino.pos.x + mino.size.sx/2;
@@ -385,15 +390,27 @@ function loopy(ms) {
       let dx = mino.pos.x + mino.size.sx / 2 - (character.pos.x + character.size.sx / 2);
       let dy = mino.pos.y + mino.size.sy / 2 - (character.pos.y + character.size.sy / 2);
       if (Math.sqrt(dx * dx + dy * dy) < (mino.size.sx / 2 + character.size.sx / 2)) {
-         character.health -=1;
-         healthBar.health -=1;
-         //console.log(character.health);
+         character.health -=mino.damage;
+         if (character.pos.x + mino.pos.x > character.pos.y + mino.pos.y) {
+            if (character.pos.x > mino.pos.x) {
+               character.pos.x += mino.damage * 5;
+            } else if (character.pos.x < mino.pos.x) {
+               character.pos.x -= mino.damage * 5;
+            }
+         } else if (character.pos.x + mino.pos.x < character.pos.y + mino.pos.y) {
+            if (character.pos.y > mino.pos.y) {
+               character.pos.y += mino.damage * 5;
+            } else if (mino.pos.y < mino.pos.y) {
+               character.pos.y -= mino.damage * 5;
+            }
+         }
+
          if(character.health <= 0) {
             character.dead = true;
             healthBar.dead = true;
             weapon.dead = true;
             weapon.damage = 0;
-            character.healt = 0;
+            character.health = 0;
             inventory.children = [];
          }
       }
