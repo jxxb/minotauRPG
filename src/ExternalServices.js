@@ -17,7 +17,7 @@ export default class ExternalServices {
 
     async getMaze(mazeId,userId = "") {
         const options = {
-            method: 'PUT',
+            method: 'POST',
             body:JSON.stringify({
                 h: setup.getColumns,
                 w: setup.getRows,

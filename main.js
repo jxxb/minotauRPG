@@ -63,7 +63,31 @@ inventoryBackground.pos.y = h - 96;
 inventoryBackground.size.sx = w + 15;
 inventoryBackground.size.sy = 100;
 
+let currentxp = 0;
+let level = 1;
+let nextLv = 50 * level;
+let nextLvXp = 1.1;
+const xp = new Text(`${currentxp}/${nextLv}`,  {
+   font: "12pt sans-serif",
+   fill: "Red",
+   align: "center"
+ });
+ xp.pos.x =w-35;
+ xp.pos.y = 80;
+ const currentLv = new Text(`${level}`,{
+    font:"22pt sans-serif",
+    fill: "Black",
+    align: "center"
+ } );
+ currentLv.pos.x = w-35;
+ currentLv.pos.y = 50;
 
+ function exponential(a,b){
+    for(let i=1; i<=b; i++){
+      a*=a;
+    }
+    return Math.round(a);
+ }
 
 
 
@@ -181,6 +205,8 @@ function walls() {
          scene.add(healthBar);
          scene.add(inventoryBackground);
          scene.add(inventory);
+         scene.add(xp);
+         scene.add(currentLv);
       })
       .catch(err => console.log(err));
 }
@@ -391,6 +417,14 @@ function loopy(ms) {
          item.size.sx = 100;
          item.size.sy = 100;
          item.visible = true;
+         currentxp += 5;
+         if(currentxp >= nextLv){
+            level++;
+            nextLv=50*level;
+            nextLv *= exponential(nextLvXp,level);
+         }
+         xp.text = `${currentxp}/${nextLv}`;
+         currentLv.text = `${level}`;
          mino.dead = true;
       }
 
@@ -424,7 +458,7 @@ function loopy(ms) {
          }
                inventory.children.forEach((item) => {
                if(item) {
-               item.damage = item.frame.y +1;
+               item.damage = item.frame.y +1 + level*.5;
                item.pos.x = inventoryLocation; 
                item.pos.y = h - 120;
                item.size.sx = 50;
