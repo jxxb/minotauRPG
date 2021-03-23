@@ -73,6 +73,7 @@ character.pos.y = 400;
 character.size.sx = 45;
 character.size.sy = 45;
 character.health = 200;
+character.startingHealth = 200;
 character.center.x = character.pos.x + character.size.sx/2;
 character.center.y = character.pos.y + character.size.sy/2;
 
@@ -107,6 +108,7 @@ character.update = function (dt, t) {
 
 const healthBar = new Rectangle();
 healthBar.health = character.health;
+healthBar.startingHealth = character.startingHealth;
 healthBar.x = character.pos.x;
 healthBar.y = character.pos.y;
 
@@ -196,6 +198,24 @@ function spawnMino(x, y, speed) {
    mino.center.x = mino.pos.x + mino.size.sx/2;
    mino.center.y = mino.pos.y + mino.size.sy/2;
    mino.health = 100;
+   mino.startingHealth = 100;
+   
+   const minohealthBar = new Rectangle();
+   minohealthBar.health = mino.health;
+   minohealthBar.startingHealth = mino.startingHealth;
+   minohealthBar.x = mino.pos.x;
+   minohealthBar.y = mino.pos.y;
+   scene.add(minohealthBar);
+
+   minohealthBar.update = function (dt) {
+      minohealthBar.x = mino.pos.x - mino.health/8 + (mino.size.sx/2);
+      minohealthBar.y = mino.pos.y - 20;
+      minohealthBar.health = mino.health;
+      if (mino.health <= 0) {
+         minohealthBar.dead = true;
+      }
+}
+   
    mino.update = function (dt) {
       let dx = 0;
       let dy = 0;
@@ -309,7 +329,7 @@ function loopy(ms) {
 
    //Change weapon
    if(controls.inventory>-1){
-      console.log(inventory.children[controls.inventory]);
+      //console.log(inventory.children[controls.inventory]);
 
       if(inventory.children[controls.inventory]){
          weapon.frame.y = inventory.children[controls.inventory].frame.y;
@@ -369,29 +389,47 @@ function loopy(ms) {
          healthBar.health -=1;
          //console.log(character.health);
          if(character.health <= 0) {
-            //character.dead = true;
+            character.dead = true;
+            healthBar.dead = true;
+            weapon.dead = true;
+            weapon.damage = 0;
+            character.healt = 0;
+            inventory.children = [];
          }
       }
 
       dx = mino.pos.x + mino.size.sx / 2 - (weapon.pos.x + weapon.size.sx / 2);
       dy = mino.pos.y + mino.size.sy / 2 - (weapon.pos.y + weapon.size.sy / 2);
       if (weapon.visible && Math.sqrt(dx * dx + dy * dy) < (mino.size.sx / 2 + weapon.size.sx / 2)) {
+         mino.health -= weapon.damage;
+         if (mino.pos.x + weapon.pos.x > mino.pos.y + weapon.pos.y) {
+            if (mino.pos.x > weapon.pos.x) {
+               mino.pos.x += weapon.damage * 5;
+            } else if (mino.pos.x < weapon.pos.x) {
+               mino.pos.x -= weapon.damage * 5;
+            }
+         } else if (mino.pos.x + weapon.pos.x < mino.pos.y + weapon.pos.y) {
+            if (mino.pos.y > weapon.pos.y) {
+               mino.pos.y += weapon.damage * 5;
+            } else if (mino.pos.y < weapon.pos.y) {
+               mino.pos.y -= weapon.damage * 5;
+            }
+         }
 
-         //drop axe
-         const item = new TileSprite(textures.weaponTiles,137,137);
-         let thing = null;
-         
-           
-
-         
-         enemyWeapons.add(item);
-         item.pos.x = mino.pos.x;
-         item.pos.y = mino.pos.y;
-         item.frame.y = getRandomIntInclusive(0,3);
-         item.size.sx = 100;
-         item.size.sy = 100;
-         item.visible = true;
-         mino.dead = true;
+         if (mino.health <= 0) {
+            //drop axe
+            const item = new TileSprite(textures.weaponTiles,137,137);
+            let thing = null;
+            
+            enemyWeapons.add(item);
+            item.pos.x = mino.pos.x;
+            item.pos.y = mino.pos.y;
+            item.frame.y = getRandomIntInclusive(0,3);
+            item.size.sx = 100;
+            item.size.sy = 100;
+            item.visible = true;
+            mino.dead = true;
+         }
       }
 
       enemyWeapons.children.forEach((weapon) => {
