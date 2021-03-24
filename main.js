@@ -379,7 +379,6 @@ function loopy(ms) {
       const colisionXDistance = hWall.size.sx / 2 + character.size.sx / 2;
       let colisionX = (hWall.pos.x + (hWall.size.sx / 2)) - (character.pos.x + (character.size.sx / 2)); // y colision area
       let colisionY = (hWall.pos.y + (hWall.size.sy / 2)) - (character.pos.y + (character.size.sy / 2));
-
       colisionX *= 1.2;
       colisionY *= 1.2;
 
