@@ -46,7 +46,6 @@ export default class ExternalServices {
             action = 'loadGame';
         }
         
-
         const APIResponse = await fetch(base_url + action, options).then(convertToJson);
         let gridArray = [];
         console.log(APIResponse);
