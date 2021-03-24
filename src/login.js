@@ -20,35 +20,22 @@ formContent.addEventListener('dblclick', (e) => {
 logOut.addEventListener('click', (e) => {
     e.preventDefault();
     user.logOutUser();
-    cleanLoadForm();
+    formContent.innerHTML = "";
     toggleForms();
 })
 
 button.addEventListener('click', (e) => {
     e.preventDefault();
     user.loginUser().then(response => {
-        console.log(response);
-        for (let game of response.user.games){
-            const newButton = document.createElement('input');
-            const newLabel = document.createElement('label');
-            newLabel.setAttribute("for",game);
-            newLabel.textContent = game;
-            newButton.type = "radio";
-            newButton.name = "savedGame";
-            newButton.id = game;
-            newButton.textContent = game;
+        displayGames();
 
-            formContent.appendChild(newButton);
-            formContent.appendChild(newLabel);
-            formContent.appendChild(document.createElement("br"));
-        }
         toggleForms();
     });
-    
 })
 
 window.addEventListener('load', (e) => {
     toggleForms();
+    displayGames();
 })
 
 //Js Behavior
@@ -62,6 +49,39 @@ const toggleForms = () => {
     }
 }
 
-const cleanLoadForm = () => {
-    formContent.innerHTML = "";
+const displayGames = () => {
+    const maxGames = 3;
+    const games = user.getUserInfo().games;
+    if (games.length === maxGames) {
+        for (let game of games) {
+            const newButton = document.createElement('input');
+            const newLabel = document.createElement('label');
+            newLabel.setAttribute("for", game);
+            newLabel.textContent = game;
+            newButton.type = "radio";
+            newButton.name = "savedGame";
+            newButton.id = game;
+
+            formContent.appendChild(newButton);
+            formContent.appendChild(newLabel);
+            formContent.appendChild(document.createElement("br"));
+        }
+    } else {
+        for (let i = 0; i < maxGames ;i++) {
+
+            let game = games[i] || `_noId${i}`;
+
+            const newButton = document.createElement('input');
+            const newLabel = document.createElement('label');
+            newLabel.setAttribute("for", game);
+            newLabel.textContent = games[i] || "New Game";
+            newButton.type = "radio";
+            newButton.name = "savedGame";
+            newButton.id = game;
+
+            formContent.appendChild(newButton);
+            formContent.appendChild(newLabel);
+            formContent.appendChild(document.createElement("br"));
+        }
+    }
 }
