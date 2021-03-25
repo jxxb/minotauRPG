@@ -1,4 +1,5 @@
 const base_url = "http://backendminotaurpg.herokuapp.com/";
+var singleGridArray;
 import Setup from "./Setup.js";
 // const base_url = "http://localhost:3000/";
 

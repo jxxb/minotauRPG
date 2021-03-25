@@ -42,7 +42,7 @@ button.addEventListener('click', (e) => {
         displayGames();
 
         toggleForms();
-    });
+    }});
 })
 
 window.addEventListener('load', (e) => {
