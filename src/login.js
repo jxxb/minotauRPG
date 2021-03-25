@@ -28,6 +28,8 @@ button.addEventListener('click', (e) => {
     e.preventDefault();
     user.loginUser().then(response => {
         console.log(response);
+        console.log(response.user._id);
+        console.log(user.getUserInfo);
         for (let game of response.user.games){
             const newButton = document.createElement('input');
             const newLabel = document.createElement('label');

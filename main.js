@@ -291,6 +291,28 @@ function getRandomIntInclusive(min, max) {
 
 walls();
 
+//Gather maze data and call ExternalServices' saveMaze function
+//This function is being called by the user clicking a button on gamepage.html
+document.getElementById('save').addEventListener("click", saveMaze);
+function saveMaze() {
+   var enemyList = new Array();
+   for (let min of minows.children) {
+      enemyList.push(min.pos);
+   }
+   // console.log("save");
+   // console.log(enemyList)
+   // console.log(user.getUserInfo()._id);
+   // console.log(character.pos);
+   // console.log(user.getActualMazeId());
+
+   // maze.saveMaze(
+   //    enemyList,
+   //    user.getUserInfo()._id, //The logged in user ID
+   //    character.pos,
+   //    user.getActualMazeId(), //The ID of the maze
+   // );
+}
+
 function loopy(ms) {
    requestAnimationFrame(loopy);
    const t = ms / 1000;
