@@ -14,6 +14,8 @@ const {
   Setup,
   TileSprite,
   User,
+  Item,
+  Inventory,
 } = src;
 
 //game setup
@@ -34,10 +36,6 @@ const textures = {
    inventory: new Texture('images/inventory/inventory.png'),
    character: new Texture('images/character/Character_base.png'),
    mino: new Texture('images/enemy/Enemy.png'),
-   //sword: new Texture('images/weapons/sword_up.png'),
-   axe: new Texture('images/weapons/axe_base.png'),
-   spear: new Texture('images/weapons/spear_base.png'),
-   mace: new Texture('images/weapons/mace_base.png'),
    vWall: new Texture('images/wall/wall_vertical.png'),
    hWall: new Texture('images/wall/wall_horizontal.png'),
    weaponTiles: new Texture('images/weapons/weapons_sprite.png')
@@ -48,15 +46,8 @@ const maze = new ExternalServices();
 const enemyWeapons = new Container();
 const weapon = new TileSprite(textures.weaponTiles, 137, 137);
 weapon.damage = 1;
-// function drawInventory() {
-//    renderer.ctx.strokeStyle = 'black';
-//    renderer.ctx.fillStyle = 'rgba(225,180,150,0.75)';
-//    renderer.ctx.strokeRect(0, h-50, w, 50);
-//    renderer.ctx.fillRect(0, h-50, w, 50);
-//    console.log('it drew me!');
-// }
 
-const inventory = new Container();
+const inventory = new Inventory();
 const inventoryBackground = new Sprite(textures.inventory);
 inventoryBackground.pos.x = -5;
 inventoryBackground.pos.y = h - 96;
@@ -88,8 +79,6 @@ const xp = new Text(`${currentxp}/${nextLv}`,  {
     }
     return Math.round(a);
  }
-
-
 
 const character = new Sprite(textures.character);
 character.pos.x = 120;
@@ -302,19 +291,19 @@ function getWeapon() {
       if (controls.x == 1) {
          weapon.frame.x = 1; // right
          this.pos.x = character.pos.x;
-         this.pos.y = character.pos.y - 40;
+         this.pos.y = character.pos.y - 70;
       } else if (controls.x == -1) {
         weapon.frame.x = 3; //left
-         this.pos.x = character.pos.x - 60;
-         this.pos.y = character.pos.y - 10;
+         this.pos.x = character.pos.x - 90;
+         this.pos.y = character.pos.y - 25;
       } else if (controls.y == 1) {
          weapon.frame.x = 2; //down
-         weapon.pos.x = character.pos.x - 10;
+         weapon.pos.x = character.pos.x - 30;
          weapon.pos.y = character.pos.y;
       } else if (controls.y == -1) {
          weapon.frame.x = 0;  //up
-         weapon.pos.x = character.pos.x - 40;
-         weapon.pos.y = character.pos.y - 60;
+         weapon.pos.x = character.pos.x - 70;
+         weapon.pos.y = character.pos.y - 90;
       }
 
       if (this.pos.x + this.sx / 2 < 0) {
@@ -496,41 +485,27 @@ function loopy(ms) {
                let inventoryLocation = 10;
    
                //weapon.inventory
-               if(inventory.children.length < 8){
-                  if(inventory.children.length == 0){
-                     inventory.add(weapon);
-                  }
-                  
-               else {
-                  let alreadyThere = 0;
-                  inventory.children.forEach((item) => {
-               if(item.frame.y != weapon.frame.y){}
-               else{
-                  alreadyThere = 1;
-               }
-               
-            })
-            if(alreadyThere != 1){inventory.add(weapon);}
+               inventory.add(weapon);
+              
+      }
+      inventory.children.forEach((item) => {
+         if(item) {
+            item.damage = item.frame.y +1 + level*.5;
+            item.pos.x = inventoryLocation; 
+            item.pos.y = h - 120;
+            item.quantity.pos.x =inventoryLocation+40;
+            item.quantity.pos.y = h - 50;
+            item.size.sx = 50;
+            item.size.sy = 50;
          }
-               inventory.children.forEach((item) => {
-               if(item) {
-               item.damage = item.frame.y +1 + level*.5;
-               item.pos.x = inventoryLocation; 
-               item.pos.y = h - 120;
-               item.size.sx = 50;
-               item.size.sy = 50;
-               }
-               inventoryLocation+=90;
+         else { }
+         inventoryLocation+=90;
             }) 
-            } else {
-               itemMultiple++;
-               console.log(itemMultiple);
-            }
             }
             
             enemyWeapons.remove(weapon);
             // weapon.visible = false;
-         };
+      
       })
 
       //mino - horizontal wall colision detection
