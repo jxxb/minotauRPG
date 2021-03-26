@@ -51,7 +51,8 @@ const toggleForms = () => {
 
 const displayGames = () => {
     const maxGames = 3;
-    const games = user.getUserInfo().games;
+    const games = user.getUserInfo().games || null;
+    if (games !== null)
     if (games.length === maxGames) {
         for (let game of games) {
             const newButton = document.createElement('input');

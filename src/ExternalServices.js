@@ -1,6 +1,6 @@
-const base_url = "http://backendminotaurpg.herokuapp.com/";
+// const base_url = "http://backendminotaurpg.herokuapp.com/";
 import Setup from "./Setup.js";
-// const base_url = "http://localhost:3000/";
+const base_url = "http://localhost:3000/";
 
 function convertToJson(jeff) {
     if (jeff.ok) return jeff.json();
