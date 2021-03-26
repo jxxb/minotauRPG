@@ -1,4 +1,5 @@
 const base_url = "http://backendminotaurpg.herokuapp.com/";
+var singleGridArray;
 import Setup from "./Setup.js";
 // const base_url = "http://localhost:3000/";
 
@@ -68,6 +69,7 @@ export default class ExternalServices {
         })
 
         console.log(gridArray);
+        singleGridArray = gridArray;
         function listToMatrix(list, numElements) {
             let matrix = [], i, j;
 
@@ -119,8 +121,27 @@ export default class ExternalServices {
 
 
 
-    saveMaze() {
-
+    saveMaze(enemies, userId, playerIndex, mazeId) {
+        if (singleGridArray == undefined) {
+            singleGridArray = new Array();
+        }
+        const options = {
+            method: 'PATCH',
+            body:JSON.stringify({
+                maze: singleGridArray,
+                enemyList: enemies,
+                id: userId,
+                userIndex: playerIndex,
+                mazeId: mazeId,
+            }),
+            headers: {
+                'Content-Type':'application/json'
+            },
+        };
+        console.log(options);
+    
+        // const APIResponse = await fetch(base_url + 'saveGame', options).then(convertToJson);
+        // fetch(base_url + 'saveGame', options);
     }
 
     async loginRequest(creds) {
