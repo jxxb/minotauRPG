@@ -6,15 +6,25 @@ export default class Inventory extends Container{
      super();
     }
     add(child){
-        let isThere = this.children.find((item)=>{
-            item.texture == child.texture;
-        })
+        let isThere = false;
+        this.children.forEach((item)=>{
+            if(item.frame.y === child.frame.y){
+                isThere = true;
+            }
+        });
         if(!isThere){
-        child = new Item(child.texture, child.tileW, child.tileH);
-        this.children.push(child);
+        let item = new Item(child.texture, child.tileW, child.tileH);
+        item.frame.y = child.frame.y;
+        item.quantity.pos.x = 125;
+        item.quantity.pos.y = 125;
+        this.children.push(item);
         }
         else{
-            isThere.quantity++;
+            this.children.forEach((item)=>{
+                if(item.frame.y === child.frame.y){
+                    item.quantity.text++;
+                }
+            });
         }
     }
 

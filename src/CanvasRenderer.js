@@ -42,7 +42,7 @@ class CanvasRenderer {
             if (font) ctx.font = font;
             if (fill) ctx.fillStyle = fill;
             if (align) ctx.textAlign = align;
-            ctx.fillText(child.quantity.text, 0, 0);
+            ctx.fillText(child.quantity.text, 90, 110);
             }
           } 
           else if (child.texture) {

@@ -475,13 +475,13 @@ function loopy(ms) {
 
          
          if (mino.health <= 0) {
-         enemyWeapons.add(item);
-         item.pos.x = mino.pos.x;
-         item.pos.y = mino.pos.y;
-         item.frame.y = getRandomIntInclusive(0,3);
-         item.size.sx = 100;
-         item.size.sy = 100;
-         item.visible = true;
+            item.pos.x = mino.pos.x;
+            item.pos.y = mino.pos.y;
+            item.frame.y = getRandomIntInclusive(0,3);
+            item.size.sx = 100;
+            item.size.sy = 100;
+            item.visible = true;
+            enemyWeapons.add(item);
          currentxp += 5;
          if(currentxp >= nextLv){
             level++;
@@ -499,24 +499,20 @@ function loopy(ms) {
          let dx = weapon.pos.x + weapon.size.sx / 3 - (character.pos.x + character.size.sx / 2);
          let dy = weapon.pos.y + weapon.size.sy / 3 - (character.pos.y + character.size.sy / 2);
 
-         if (Math.sqrt(dx * dx + dy * dy) < (weapon.size.sx / 3 + character.size.sx / 2)) {
-            if(!inventory.children.some((item) => {
-               item.Texture === weapon.Texture;
-            })){ 
-
-               let inventoryLocation = 10;
-   
+         let inventoryLocation = 10;
+         if (Math.sqrt(dx * dx + dy * dy) < (weapon.size.sx / 3 + character.size.sx / 2)) { 
                //weapon.inventory
                inventory.add(weapon);
+               enemyWeapons.remove(weapon);
               
-      }
+      
       inventory.children.forEach((item) => {
          if(item) {
             item.damage = item.frame.y +1 + level*.5;
             item.pos.x = inventoryLocation; 
             item.pos.y = h - 120;
-            item.quantity.pos.x =inventoryLocation+40;
-            item.quantity.pos.y = h - 50;
+            //item.quantity.pos.x =inventoryLocation+100;
+            //item.quantity.pos.y = h - 20;
             item.size.sx = 50;
             item.size.sy = 50;
          }
@@ -524,8 +520,8 @@ function loopy(ms) {
          inventoryLocation+=90;
             }) 
             }
+                       
             
-            enemyWeapons.remove(weapon);
             // weapon.visible = false;
       
       })
