@@ -16,13 +16,15 @@ const {
   User,
 } = src;
 
+const setup = new Setup();
+let initial;
 //game setup
-const w = 800;
-const h = 600;
-const columns = 10;
-const rows = 10;
-const cellW = w / columns;
-const cellH = h / rows;
+const w = setup.w;
+const h = setup.h;
+const columns = setup.columns;
+const rows = setup.rows;
+const cellW = setup.cellW;
+const cellH = setup.cellH;
 let itemMultiple = 0;
 
 const renderer = new CanvasRenderer(w, h);
@@ -44,7 +46,6 @@ const textures = {
 };
 const maze = new ExternalServices();
 
-
 const enemyWeapons = new Container();
 const weapon = new TileSprite(textures.weaponTiles, 137, 137);
 weapon.damage = 1;
@@ -62,6 +63,10 @@ inventoryBackground.pos.x = -5;
 inventoryBackground.pos.y = h - 96;
 inventoryBackground.size.sx = w + 15;
 inventoryBackground.size.sy = 100;
+
+function initialize() {
+   initial = User.getMassStorage();
+}
 
 let currentxp = 0;
 let level = 1;
@@ -341,6 +346,7 @@ function getRandomIntInclusive(min, max) {
 }
 
 walls();
+initialize();
 
 //Gather maze data and call ExternalServices' saveMaze function
 //This function is being called by the user clicking a button on gamepage.html
@@ -348,20 +354,24 @@ document.getElementById('save').addEventListener("click", saveMaze);
 function saveMaze() {
    var enemyList = new Array();
    for (let min of minows.children) {
-      enemyList.push(min.pos);
+      enemyList.push({
+         pos: min.pos,
+         health: min.health,
+         maxHealth: min.startingHealth,
+      });
    }
    // console.log("save");
-   // console.log(enemyList)
-   // console.log(user.getUserInfo()._id);
-   // console.log(character.pos);
-   // console.log(user.getActualMazeId());
 
-   // maze.saveMaze(
-   //    enemyList,
-   //    user.getUserInfo()._id, //The logged in user ID
-   //    character.pos,
-   //    user.getActualMazeId(), //The ID of the maze
-   // );
+   maze.saveMaze(
+      enemyList,
+      user.getUserInfo()._id, //The logged in user ID
+      character.pos, //Object containing x and y pos of the player
+      character.health, //Current health of the player
+      character.startingHealth, //Max health of the player
+      currentxp, //Not stored as part of the character currently
+      level, //Not stored as part of the character currently
+      user.getActualMazeId(), //The ID of the maze
+   );
 }
 
 function loopy(ms) {

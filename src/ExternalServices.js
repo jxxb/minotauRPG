@@ -49,7 +49,13 @@ export default class ExternalServices {
         
         const APIResponse = await fetch(base_url + action, options).then(convertToJson);
         let gridArray = [];
+        localStorage.setItem('massStorage', JSON.stringify({
+            maze: fwe,///,
+            playerPos: wejio,
+
+        }));
         console.log(APIResponse);
+        singleGridArray = APIResponse.maze;
         APIResponse.maze.forEach((cell) => {
             if (cell.vertical && cell.horizontal) {
                 // 'bottomRight'
@@ -68,8 +74,8 @@ export default class ExternalServices {
             gridArray.push(cell);
         })
 
-        console.log(gridArray);
-        singleGridArray = gridArray;
+        // console.log(gridArray);
+        // singleGridArray = gridArray;
         function listToMatrix(list, numElements) {
             let matrix = [], i, j;
 
@@ -121,18 +127,25 @@ export default class ExternalServices {
 
 
 
-    saveMaze(enemies, userId, playerIndex, mazeId) {
+    saveMaze(enemies, userId, playerPos, playerHealth, playerMaxHealth, currentXp, playerLevel, mazeId) {
         if (singleGridArray == undefined) {
             singleGridArray = new Array();
         }
         const options = {
             method: 'PATCH',
             body:JSON.stringify({
-                maze: singleGridArray,
-                enemyList: enemies,
-                id: userId,
-                userIndex: playerIndex,
-                mazeId: mazeId,
+                userId: userId,
+                game: {
+                    _id: mazeId,
+                    maze: singleGridArray,
+                    enemyList: enemies,
+                    userIndex: playerPos,
+                    playerHealth: playerHealth,
+                    playerMaxHealth, playerMaxHealth,
+                    currentXp: currentXp,
+                    playerLevel: playerLevel,
+                    mazeId: mazeId,
+                },
             }),
             headers: {
                 'Content-Type':'application/json'
@@ -140,7 +153,6 @@ export default class ExternalServices {
         };
         console.log(options);
     
-        // const APIResponse = await fetch(base_url + 'saveGame', options).then(convertToJson);
         // fetch(base_url + 'saveGame', options);
     }
 
