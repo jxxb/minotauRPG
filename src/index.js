@@ -9,6 +9,8 @@ import TileSprite from "./TileSprite.js";
 import User from "./User.js";
 import Rectangle from "./Rectangle.js";
 import Setup from "./Setup.js";
+import Item from "./Item.js";
+import Inventory from "./Inventory.js";
 
 export default {
   Container,
@@ -22,4 +24,6 @@ export default {
   Setup,
   TileSprite,
   User,
+  Item,
+  Inventory,
 };

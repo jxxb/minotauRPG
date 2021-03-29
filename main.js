@@ -14,6 +14,8 @@ const {
   Setup,
   TileSprite,
   User,
+  Item,
+  Inventory,
 } = src;
 
 //game setup
@@ -35,10 +37,6 @@ const textures = {
    inventory: new Texture('images/inventory/inventory.png'),
    character: new Texture('images/character/Character_base.png'),
    mino: new Texture('images/enemy/Enemy.png'),
-   //sword: new Texture('images/weapons/sword_up.png'),
-   axe: new Texture('images/weapons/axe_base.png'),
-   spear: new Texture('images/weapons/spear_base.png'),
-   mace: new Texture('images/weapons/mace_base.png'),
    vWall: new Texture('images/wall/wall_vertical.png'),
    hWall: new Texture('images/wall/wall_horizontal.png'),
    weaponTiles: new Texture('images/weapons/weapons_sprite.png')
@@ -52,21 +50,43 @@ background.size.sy = h;
 const enemyWeapons = new Container();
 const weapon = new TileSprite(textures.weaponTiles, 137, 137);
 weapon.damage = 1;
-// function drawInventory() {
-//    renderer.ctx.strokeStyle = 'black';
-//    renderer.ctx.fillStyle = 'rgba(225,180,150,0.75)';
-//    renderer.ctx.strokeRect(0, h-50, w, 50);
-//    renderer.ctx.fillRect(0, h-50, w, 50);
-//    console.log('it drew me!');
-// }
 
-const inventory = new Container();
+const inventory = new Inventory();
 const inventoryBackground = new Sprite(textures.inventory);
 inventoryBackground.pos.x = -5;
 inventoryBackground.pos.y = h - 96;
 inventoryBackground.size.sx = w + 15;
 inventoryBackground.size.sy = 100;
 
+<<<<<<< HEAD
+=======
+let currentxp = 0;
+let level = 1;
+let nextLv = 50 * level;
+let nextLvXp = 1.1;
+const xp = new Text(`${currentxp}/${nextLv}`,  {
+   font: "12pt sans-serif",
+   fill: "Red",
+   align: "center"
+ });
+ xp.pos.x =w-35;
+ xp.pos.y = 80;
+ const currentLv = new Text(`${level}`,{
+    font:"22pt sans-serif",
+    fill: "Black",
+    align: "center"
+ } );
+ currentLv.pos.x = w-35;
+ currentLv.pos.y = 50;
+
+ function exponential(a,b){
+    for(let i=1; i<=b; i++){
+      a*=a;
+    }
+    return Math.round(a);
+ }
+
+>>>>>>> 474735ed3097dedfe6d38cd130bf604770133858
 const character = new Sprite(textures.character);
 character.pos.x = 120;
 character.pos.y = 400;
@@ -154,7 +174,8 @@ function spawnHWalls(x, y) {
 
 function walls() {
 
-   maze.getMaze(user.getActualMazeId()).then(mazeWalls => {
+   const token = user.getUserToken() || "";
+   maze.getMaze(user.getActualMazeId(),token).then(mazeWalls => {
          for (let i = 0; i < mazeWalls.length; i++) {
             for (let j = 0; j < mazeWalls[i].length; j++) {
                //type 1 = br
@@ -279,19 +300,19 @@ function getWeapon() {
       if (controls.x == 1) {
          weapon.frame.x = 1; // right
          this.pos.x = character.pos.x;
-         this.pos.y = character.pos.y - 40;
+         this.pos.y = character.pos.y - 70;
       } else if (controls.x == -1) {
         weapon.frame.x = 3; //left
-         this.pos.x = character.pos.x - 60;
-         this.pos.y = character.pos.y - 10;
+         this.pos.x = character.pos.x - 90;
+         this.pos.y = character.pos.y - 25;
       } else if (controls.y == 1) {
          weapon.frame.x = 2; //down
-         weapon.pos.x = character.pos.x - 10;
+         weapon.pos.x = character.pos.x - 30;
          weapon.pos.y = character.pos.y;
       } else if (controls.y == -1) {
          weapon.frame.x = 0;  //up
-         weapon.pos.x = character.pos.x - 40;
-         weapon.pos.y = character.pos.y - 60;
+         weapon.pos.x = character.pos.x - 70;
+         weapon.pos.y = character.pos.y - 90;
       }
 
       if (this.pos.x + this.sx / 2 < 0) {
@@ -327,7 +348,7 @@ function loopy(ms) {
    //game logic code
    //ctx.save();
    //drawInventory();
-   if (controls.action) {
+   if (!gameOver && controls.action) {
       getWeapon();
       
       weapon.visible = true;
@@ -436,6 +457,24 @@ function loopy(ms) {
          }*/
 
          if (mino.health <= 0) {
+<<<<<<< HEAD
+=======
+            item.pos.x = mino.pos.x;
+            item.pos.y = mino.pos.y;
+            item.frame.y = getRandomIntInclusive(0,3);
+            item.size.sx = 100;
+            item.size.sy = 100;
+            item.visible = true;
+            enemyWeapons.add(item);
+         currentxp += 5;
+         if(currentxp >= nextLv){
+            level++;
+            nextLv=50*level;
+            nextLv *= exponential(nextLvXp,level);
+         }
+         xp.text = `${currentxp}/${nextLv}`;
+         currentLv.text = `${level}`;
+>>>>>>> 474735ed3097dedfe6d38cd130bf604770133858
             //drop axe
             const item = new TileSprite(textures.weaponTiles,137,137);
             let thing = null;
@@ -455,30 +494,24 @@ function loopy(ms) {
          let dx = weapon.pos.x + weapon.size.sx / 3 - (character.pos.x + character.size.sx / 2);
          let dy = weapon.pos.y + weapon.size.sy / 3 - (character.pos.y + character.size.sy / 2);
 
-         if (Math.sqrt(dx * dx + dy * dy) < (weapon.size.sx / 3 + character.size.sx / 2)) {
-            if(!inventory.children.some((item) => {
-               item.Texture === weapon.Texture;
-            })){ 
-
-               let inventoryLocation = 10;
-   
+         let inventoryLocation = 10;
+         if (Math.sqrt(dx * dx + dy * dy) < (weapon.size.sx / 3 + character.size.sx / 2)) { 
                //weapon.inventory
-               if(inventory.children.length < 8){
-                  if(inventory.children.length == 0){
-                     inventory.add(weapon);
-                  }
-                  
-               else {
-                  let alreadyThere = 0;
-                  inventory.children.forEach((item) => {
-               if(item.frame.y != weapon.frame.y){}
-               else{
-                  alreadyThere = 1;
-               }
-               
-            })
-            if(alreadyThere != 1){inventory.add(weapon);}
+               inventory.add(weapon);
+               enemyWeapons.remove(weapon);
+              
+      
+      inventory.children.forEach((item) => {
+         if(item) {
+            item.damage = item.frame.y +1 + level*.5;
+            item.pos.x = inventoryLocation; 
+            item.pos.y = h - 120;
+            //item.quantity.pos.x =inventoryLocation+100;
+            //item.quantity.pos.y = h - 20;
+            item.size.sx = 50;
+            item.size.sy = 50;
          }
+<<<<<<< HEAD
                inventory.children.forEach((item) => {
                if(item) {
                item.damage = item.frame.y +1;
@@ -488,16 +521,16 @@ function loopy(ms) {
                item.size.sy = 50;
                }
                inventoryLocation+=90;
+=======
+         else { }
+         inventoryLocation+=90;
+>>>>>>> 474735ed3097dedfe6d38cd130bf604770133858
             }) 
-            } else {
-               itemMultiple++;
-               console.log(itemMultiple);
             }
-            }
+                       
             
-            enemyWeapons.remove(weapon);
             // weapon.visible = false;
-         };
+      
       })
 
       //mino - horizontal wall colision detection
@@ -558,7 +591,24 @@ function loopy(ms) {
          }
       });
    });
- 
+   function endgame(){
+      let gameOverTxt = new Text("Game Over", {
+         font:"30pt sans-serif",
+         fill:"Red",
+         align:"center"
+      });
+      gameOverTxt.pos.x = w/2;
+      gameOverTxt.pos.y = h/2;
+      scene.add(gameOverTxt);
+      scene.remove(character);
+      gameOver = true;
+       }
+       if(character.dead){
+          endgame();
+          setTimeout(()=>{
+             window.location = "./login.html";
+          },2000);
+       }
    scene.update(dt, t);
    renderer.render(scene);
    //drawInventory();

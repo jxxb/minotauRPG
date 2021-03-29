@@ -10,7 +10,7 @@ const loadForm = document.querySelector('#loadForm');
 const formContent = document.querySelector('#formContent');
 
 //listeners
-//Option listener (just added when the element is created)
+
 formContent.addEventListener('dblclick', (e) => {
     const gameId = e.target.getAttribute("for");
     user.setActualMaze(gameId);
@@ -27,22 +27,10 @@ logOut.addEventListener('click', (e) => {
 button.addEventListener('click', (e) => {
     e.preventDefault();
     user.loginUser().then(response => {
-        console.log(response);
-        console.log(response.user._id);
-        console.log(user.getUserInfo);
-        for (let game of response.user.games){
-            const newButton = document.createElement('input');
-            const newLabel = document.createElement('label');
-            newLabel.setAttribute("for",game);
-            newLabel.textContent = game;
-            newButton.type = "radio";
-            newButton.name = "savedGame";
-            newButton.id = game;
-            newButton.textContent = game;
+        console.log(response)
         displayGames();
-
         toggleForms();
-    }});
+    });
 })
 
 window.addEventListener('load', (e) => {
@@ -62,9 +50,8 @@ const toggleForms = () => {
 }
 
 const displayGames = () => {
-    if (user.getUserInfo().games == null) return;
+    if (user.getUserInfo() == null) return;
     const maxGames = 3;
-
 
     const games = user.getUserInfo().games || null;
     
