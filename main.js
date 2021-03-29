@@ -209,6 +209,7 @@ function walls() {
          scene.add(inventoryBackground);
          scene.add(inventory);
          scene.add(xp);
+         scene.add(currentLv);
       })
       .catch(err => console.log(err));
 }
