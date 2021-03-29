@@ -14,6 +14,8 @@ const {
   Setup,
   TileSprite,
   User,
+  Item,
+  Inventory,
 } = src;
 
 const setup = new Setup();
@@ -33,31 +35,28 @@ const controls = new KeyControls();
 const scene = new Container();
 const user = new User();
 const textures = {
+   background: new Texture('images/background/background.png'),
    inventory: new Texture('images/inventory/inventory.png'),
    character: new Texture('images/character/Character_base.png'),
    mino: new Texture('images/enemy/Enemy.png'),
-   //sword: new Texture('images/weapons/sword_up.png'),
-   axe: new Texture('images/weapons/axe_base.png'),
-   spear: new Texture('images/weapons/spear_base.png'),
-   mace: new Texture('images/weapons/mace_base.png'),
    vWall: new Texture('images/wall/wall_vertical.png'),
    hWall: new Texture('images/wall/wall_horizontal.png'),
    weaponTiles: new Texture('images/weapons/weapons_sprite.png')
 };
 const maze = new ExternalServices();
 
+<<<<<<< HEAD
+=======
+const background = new Sprite(textures.background);
+background.size.sx = w;
+background.size.sy = h;
+
+>>>>>>> 025bf0d4987ed5bf87be2d4814550d7437226d56
 const enemyWeapons = new Container();
 const weapon = new TileSprite(textures.weaponTiles, 137, 137);
 weapon.damage = 1;
-// function drawInventory() {
-//    renderer.ctx.strokeStyle = 'black';
-//    renderer.ctx.fillStyle = 'rgba(225,180,150,0.75)';
-//    renderer.ctx.strokeRect(0, h-50, w, 50);
-//    renderer.ctx.fillRect(0, h-50, w, 50);
-//    console.log('it drew me!');
-// }
 
-const inventory = new Container();
+const inventory = new Inventory();
 const inventoryBackground = new Sprite(textures.inventory);
 inventoryBackground.pos.x = -5;
 inventoryBackground.pos.y = h - 96;
@@ -94,15 +93,13 @@ const xp = new Text(`${currentxp}/${nextLv}`,  {
     return Math.round(a);
  }
 
-
-
 const character = new Sprite(textures.character);
 character.pos.x = 120;
 character.pos.y = 400;
 character.size.sx = 45;
 character.size.sy = 45;
-character.health = 200;
-character.startingHealth = 200;
+character.health = 800;
+character.startingHealth = 800;
 character.center.x = character.pos.x + character.size.sx/2;
 character.center.y = character.pos.y + character.size.sy/2;
 
@@ -124,17 +121,19 @@ character.update = function (dt, t) {
       textures.character.img.src = 'images/character/Character_down.png';
    }
 
+   //character screen boundaries
    if (this.pos.x < 0) {
-      this.pos.x = 0;
+      this.pos.x = w - this.size.sx;
+      
    }
    if (this.pos.x > w - this.size.sx) {
-      this.pos.x = w - this.size.sx;
+      this.pos.x = 0;
    }
    if (this.pos.y < 0) {
-      this.pos.y = 0;
+      this.pos.y = h - this.size.sy;
    }
    if (this.pos.y > h - this.size.sy) {
-      this.pos.y = h - this.size.sy;
+      this.pos.y = 0;
    }
 }
 
@@ -181,7 +180,8 @@ function spawnHWalls(x, y) {
 
 function walls() {
 
-   maze.getMaze(user.getActualMazeId()).then(mazeWalls => {
+   const token = user.getUserToken() || "";
+   maze.getMaze(user.getActualMazeId(),token).then(mazeWalls => {
          for (let i = 0; i < mazeWalls.length; i++) {
             for (let j = 0; j < mazeWalls[i].length; j++) {
                //type 1 = br
@@ -206,6 +206,7 @@ function walls() {
                }
             }
          }
+         //scene.add(background);
          scene.add(hWalls);
          scene.add(vWalls);
          //scene.add(sword);
@@ -307,19 +308,19 @@ function getWeapon() {
       if (controls.x == 1) {
          weapon.frame.x = 1; // right
          this.pos.x = character.pos.x;
-         this.pos.y = character.pos.y - 40;
+         this.pos.y = character.pos.y - 70;
       } else if (controls.x == -1) {
         weapon.frame.x = 3; //left
-         this.pos.x = character.pos.x - 60;
-         this.pos.y = character.pos.y - 10;
+         this.pos.x = character.pos.x - 90;
+         this.pos.y = character.pos.y - 25;
       } else if (controls.y == 1) {
          weapon.frame.x = 2; //down
-         weapon.pos.x = character.pos.x - 10;
+         weapon.pos.x = character.pos.x - 30;
          weapon.pos.y = character.pos.y;
       } else if (controls.y == -1) {
          weapon.frame.x = 0;  //up
-         weapon.pos.x = character.pos.x - 40;
-         weapon.pos.y = character.pos.y - 60;
+         weapon.pos.x = character.pos.x - 70;
+         weapon.pos.y = character.pos.y - 90;
       }
 
       if (this.pos.x + this.sx / 2 < 0) {
@@ -345,9 +346,11 @@ function getRandomIntInclusive(min, max) {
    return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
 }
 
+//scene.add(background);
 walls();
 initialize();
 
+<<<<<<< HEAD
 //Gather maze data and call ExternalServices' saveMaze function
 //This function is being called by the user clicking a button on gamepage.html
 document.getElementById('save').addEventListener("click", saveMaze);
@@ -374,6 +377,8 @@ function saveMaze() {
    );
 }
 
+=======
+>>>>>>> 025bf0d4987ed5bf87be2d4814550d7437226d56
 function loopy(ms) {
    requestAnimationFrame(loopy);
    const t = ms / 1000;
@@ -382,7 +387,7 @@ function loopy(ms) {
    //game logic code
    //ctx.save();
    //drawInventory();
-   if (controls.action) {
+   if (!gameOver && controls.action) {
       getWeapon();
       
       weapon.visible = true;
@@ -411,6 +416,7 @@ function loopy(ms) {
       const colisionXDistance = hWall.size.sx / 2 + character.size.sx / 2;
       let colisionX = (hWall.pos.x + (hWall.size.sx / 2)) - (character.pos.x + (character.size.sx / 2)); // y colision area
       let colisionY = (hWall.pos.y + (hWall.size.sy / 2)) - (character.pos.y + (character.size.sy / 2));
+
       colisionX *= 1.2;
       colisionY *= 1.2;
 
@@ -448,62 +454,58 @@ function loopy(ms) {
       let dy = mino.pos.y + mino.size.sy / 2 - (character.pos.y + character.size.sy / 2);
       if (Math.sqrt(dx * dx + dy * dy) < (mino.size.sx / 2 + character.size.sx / 2)) {
          character.health -=mino.damage;
-         if (character.pos.x + mino.pos.x > character.pos.y + mino.pos.y) {
-            if (character.pos.x > mino.pos.x) {
-               character.pos.x += mino.damage * 5;
-            } else if (character.pos.x < mino.pos.x) {
-               character.pos.x -= mino.damage * 5;
-            }
-         } else if (character.pos.x + mino.pos.x < character.pos.y + mino.pos.y) {
-            if (character.pos.y > mino.pos.y) {
-               character.pos.y += mino.damage * 5;
-            } else if (mino.pos.y < mino.pos.y) {
-               character.pos.y -= mino.damage * 5;
-            }
-         }
+         if (mino.texture.img.src == "images/enemy/Enemy.png") {
 
-         if(character.health <= 0) {
-            character.dead = true;
-            healthBar.dead = true;
-            weapon.dead = true;
-            weapon.damage = 0;
-            character.health = 0;
-            inventory.children = [];
+            character.pos.x += mino.damage * 5;
          }
+         else if (mino.texture.img.src == "images/enemy/Enemy-down.png") {
+            character.pos.x -= mino.damage * 5;
+         }
+         else if (mino.texture.img.src == "images/enemy/Enemy-left.png") {
+            character.pos.y += mino.damage * 5;
+         } 
+         else if (mino.texture.img.src == "images/enemy/Enemy-right.png") {
+            character.pos.y -= mino.damage * 5;
+         }
+      }
+
+      if(character.health <= 0) {
+         character.dead = true;
+         healthBar.dead = true;
+         weapon.dead = true;
+         weapon.damage = 0;
+         character.health = 0;
+         inventory.children = [];
       }
 
       dx = mino.pos.x + mino.size.sx / 2 - (weapon.pos.x + weapon.size.sx / 2);
       dy = mino.pos.y + mino.size.sy / 2 - (weapon.pos.y + weapon.size.sy / 2);
       if (weapon.visible && Math.sqrt(dx * dx + dy * dy) < (mino.size.sx / 2 + weapon.size.sx / 2)) {
          mino.health -= weapon.damage;
-         if (mino.pos.x + weapon.pos.x > mino.pos.y + weapon.pos.y) {
-            if (mino.pos.x > weapon.pos.x) {
-               mino.pos.x += weapon.damage * 5;
-            } else if (mino.pos.x < weapon.pos.x) {
-               mino.pos.x -= weapon.damage * 5;
-            }
-         } else if (mino.pos.x + weapon.pos.x < mino.pos.y + weapon.pos.y) {
-            if (mino.pos.y > weapon.pos.y) {
-               mino.pos.y += weapon.damage * 5;
-            } else if (mino.pos.y < weapon.pos.y) {
-               mino.pos.y -= weapon.damage * 5;
-            }
+         /*if (weapon.frame.x == 0) {
+            mino.pos.x += weapon.damage * 5;
          }
+         else if (weapon.frame.x == 1) {
+            mino.pos.x -= weapon.damage * 5;
+         }
+         else if (weapon.frame.x == 2) {
+            mino.pos.y += weapon.damage * 5;
+         } 
+         else if (weapon.frame.x == 3) {
+            mino.pos.y -= weapon.damage * 5;
+         }*/
 
-         //drop axe
-         const item = new TileSprite(textures.weaponTiles,137,137);         
-           
+         const item = new TileSprite(textures.weaponTiles,137,137);
 
-         
          if (mino.health <= 0) {
-         enemyWeapons.add(item);
-         item.pos.x = mino.pos.x;
-         item.pos.y = mino.pos.y;
-         item.frame.y = getRandomIntInclusive(0,3);
-         item.size.sx = 100;
-         item.size.sy = 100;
-         item.visible = true;
-         currentxp += 5;
+            item.pos.x = mino.pos.x;
+            item.pos.y = mino.pos.y;
+            item.frame.y = getRandomIntInclusive(0,3);
+            item.size.sx = 100;
+            item.size.sy = 100;
+            item.visible = true;
+            enemyWeapons.add(item);
+            currentxp += 5;
          if(currentxp >= nextLv){
             level++;
             nextLv=50*level;
@@ -520,49 +522,31 @@ function loopy(ms) {
          let dx = weapon.pos.x + weapon.size.sx / 3 - (character.pos.x + character.size.sx / 2);
          let dy = weapon.pos.y + weapon.size.sy / 3 - (character.pos.y + character.size.sy / 2);
 
-         if (Math.sqrt(dx * dx + dy * dy) < (weapon.size.sx / 3 + character.size.sx / 2)) {
-            if(!inventory.children.some((item) => {
-               item.Texture === weapon.Texture;
-            })){ 
-
-               let inventoryLocation = 10;
-   
+         let inventoryLocation = 10;
+         if (Math.sqrt(dx * dx + dy * dy) < (weapon.size.sx / 3 + character.size.sx / 2)) { 
                //weapon.inventory
-               if(inventory.children.length < 8){
-                  if(inventory.children.length == 0){
-                     inventory.add(weapon);
-                  }
-                  
-               else {
-                  let alreadyThere = 0;
-                  inventory.children.forEach((item) => {
-               if(item.frame.y != weapon.frame.y){}
-               else{
-                  alreadyThere = 1;
-               }
-               
-            })
-            if(alreadyThere != 1){inventory.add(weapon);}
+               inventory.add(weapon);
+               enemyWeapons.remove(weapon);
+              
+      
+      inventory.children.forEach((item) => {
+         if(item) {
+            item.damage = item.frame.y +1 + level*.5;
+            item.pos.x = inventoryLocation; 
+            item.pos.y = h - 120;
+            //item.quantity.pos.x =inventoryLocation+100;
+            //item.quantity.pos.y = h - 20;
+            item.size.sx = 50;
+            item.size.sy = 50;
          }
-               inventory.children.forEach((item) => {
-               if(item) {
-               item.damage = item.frame.y +1 + level*.5;
-               item.pos.x = inventoryLocation; 
-               item.pos.y = h - 120;
-               item.size.sx = 50;
-               item.size.sy = 50;
-               }
-               inventoryLocation+=90;
+         else { }
+         inventoryLocation+=90;
             }) 
-            } else {
-               itemMultiple++;
-               console.log(itemMultiple);
             }
-            }
+                       
             
-            enemyWeapons.remove(weapon);
             // weapon.visible = false;
-         };
+      
       })
 
       //mino - horizontal wall colision detection
@@ -623,7 +607,24 @@ function loopy(ms) {
          }
       });
    });
- 
+   function endgame(){
+      let gameOverTxt = new Text("Game Over", {
+         font:"30pt sans-serif",
+         fill:"Red",
+         align:"center"
+      });
+      gameOverTxt.pos.x = w/2;
+      gameOverTxt.pos.y = h/2;
+      scene.add(gameOverTxt);
+      scene.remove(character);
+      gameOver = true;
+       }
+       if(character.dead){
+          endgame();
+          setTimeout(()=>{
+             window.location = "./login.html";
+          },2000);
+       }
    scene.update(dt, t);
    renderer.render(scene);
    //drawInventory();

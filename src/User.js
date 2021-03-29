@@ -5,6 +5,10 @@ export default class User{
         this.services = new ExternalServices();
     }
 
+    getUserToken() {
+        return localStorage.getItem('token');
+    }
+    
     checkPassword(pass1, pass2){
         return pass1==pass2;
     }
@@ -48,18 +52,16 @@ export default class User{
 
     async login(creds) {
         try {
-            //TOKEN?
             return await this.services.loginRequest(creds);
         } catch(err) {
-            console.log("WAHHHHHHH!");
+            console.log("Error Loging In");
         }
     }
     async signup(creds) {
         try {
-            //TOKEN?
             return await this.services.signupRequest(creds);
         } catch(err) {
-            console.log("WAHHHHHHH!");
+            console.log("Error Loging Un!");
         }
     }
 }

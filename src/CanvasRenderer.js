@@ -36,6 +36,14 @@ class CanvasRenderer {
               0,0,                         //destination x & y
               child.tileW, child.tileH     //destination width & height
             );
+            if(child.quantity){
+            console.log(child.quantity);
+            const { font, fill, align } = child.quantity.style;
+            if (font) ctx.font = font;
+            if (fill) ctx.fillStyle = fill;
+            if (align) ctx.textAlign = align;
+            ctx.fillText(child.quantity.text, 90, 110);
+            }
           } 
           else if (child.texture) {
             ctx.drawImage(child.texture.img, 0, 0, child.size.sx, child.size.sy);
