@@ -197,7 +197,7 @@ function walls() {
                }
             }
          }
-         
+         //scene.add(background);
          scene.add(hWalls);
          scene.add(vWalls);
          //scene.add(sword);
@@ -208,6 +208,8 @@ function walls() {
          scene.add(healthBar);
          scene.add(inventoryBackground);
          scene.add(inventory);
+         scene.add(xp);
+         scene.add(currentLv);
       })
       .catch(err => console.log(err));
 }
