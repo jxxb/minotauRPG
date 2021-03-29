@@ -1,3 +1,10 @@
+.gameOver{
+   position:relative;
+   left: 400px;
+   top: 300px;
+   width: 80%;
+   text-align: center;
+}
 #board {
    width: 800px;
    height: 600px;
