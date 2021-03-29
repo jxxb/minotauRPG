@@ -165,7 +165,8 @@ function spawnHWalls(x, y) {
 
 function walls() {
 
-   maze.getMaze(user.getActualMazeId()).then(mazeWalls => {
+   const token = user.getUserToken() || "";
+   maze.getMaze(user.getActualMazeId(),token).then(mazeWalls => {
          for (let i = 0; i < mazeWalls.length; i++) {
             for (let j = 0; j < mazeWalls[i].length; j++) {
                //type 1 = br

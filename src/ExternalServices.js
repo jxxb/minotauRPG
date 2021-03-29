@@ -1,7 +1,7 @@
-const base_url = "http://backendminotaurpg.herokuapp.com/";
+// const base_url = "http://backendminotaurpg.herokuapp.com/";
 var singleGridArray;
 import Setup from "./Setup.js";
-// const base_url = "http://localhost:3000/";
+const base_url = "http://localhost:3000/";
 
 function convertToJson(jeff) {
     if (jeff.ok) return jeff.json();
@@ -17,7 +17,7 @@ let setup = new Setup();
 export default class ExternalServices {
     constructor() { }
 
-    async getMaze(mazeId, userId = "") {
+    async getMaze(mazeId, token = "") {
         let options;
         let action;
         if (mazeId.includes('_noId')) {
@@ -41,7 +41,8 @@ export default class ExternalServices {
                     gameId: mazeId
                 }),
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization' : 'Bearer ' + token
                 },
             };
             action = 'loadGame';
@@ -150,16 +151,20 @@ export default class ExternalServices {
             body: JSON.stringify(creds),
             headers: {
                 'Content-Type': 'application/json'
+                
             },
         };
 
         const response = await fetch(base_url + 'signin', options).then(convertToJson);
-        //
-        if (response.status === 200)
-            localStorage.setItem('user', JSON.stringify(response.user)); //Or a cookie
-        //Redirection send an error
+        
+        if (response.status === 200) {
+            localStorage.setItem('user', JSON.stringify(response.user)); 
+            localStorage.setItem('token', response.token); 
+        }
+            
+        
 
-        return response;//.accessToken;
+        return response;
     }
 
     async signupRequest(creds) {
