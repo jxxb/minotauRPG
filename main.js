@@ -416,7 +416,7 @@ function loopy(ms) {
       if (Math.sqrt(dx * dx + dy * dy) < (mino.size.sx / 2 + character.size.sx / 2)) {
          character.health -=mino.damage;
          if (mino.texture.img.src == "images/enemy/Enemy.png") {
-            console.log(mino.texture.img.src);
+
             character.pos.x += mino.damage * 5;
          }
          else if (mino.texture.img.src == "images/enemy/Enemy-down.png") {
@@ -475,16 +475,6 @@ function loopy(ms) {
          xp.text = `${currentxp}/${nextLv}`;
          currentLv.text = `${level}`;
             //drop axe
-            
-            let thing = null;
-            
-            enemyWeapons.add(item);
-            item.pos.x = mino.pos.x;
-            item.pos.y = mino.pos.y;
-            item.frame.y = getRandomIntInclusive(0,3);
-            item.size.sx = 100;
-            item.size.sy = 100;
-            item.visible = true;
             mino.dead = true;
          }
       }

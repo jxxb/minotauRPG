@@ -23,6 +23,7 @@ export default class Inventory extends Container{
             this.children.forEach((item)=>{
                 if(item.frame.y === child.frame.y){
                     item.quantity.text++;
+                    console.log(item.quantity.text);
                 }
             });
         }
