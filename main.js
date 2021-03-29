@@ -361,7 +361,7 @@ function loopy(ms) {
    //game logic code
    //ctx.save();
    //drawInventory();
-   if (controls.action) {
+   if (!gameOver && controls.action) {
       getWeapon();
       
       weapon.visible = true;
@@ -584,7 +584,24 @@ function loopy(ms) {
          }
       });
    });
- 
+   function endgame(){
+      let gameOverTxt = new Text("Game Over", {
+         font:"30pt sans-serif",
+         fill:"Red",
+         align:"center"
+      });
+      gameOverTxt.pos.x = w/2;
+      gameOverTxt.pos.y = h/2;
+      scene.add(gameOverTxt);
+      scene.remove(character);
+      gameOver = true;
+       }
+       if(character.dead){
+          endgame();
+          setTimeout(()=>{
+             window.location = "./login.html";
+          },2000);
+       }
    scene.update(dt, t);
    renderer.render(scene);
    //drawInventory();
