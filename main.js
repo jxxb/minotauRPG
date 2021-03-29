@@ -58,8 +58,6 @@ inventoryBackground.pos.y = h - 96;
 inventoryBackground.size.sx = w + 15;
 inventoryBackground.size.sy = 100;
 
-<<<<<<< HEAD
-=======
 let currentxp = 0;
 let level = 1;
 let nextLv = 50 * level;
@@ -86,7 +84,6 @@ const xp = new Text(`${currentxp}/${nextLv}`,  {
     return Math.round(a);
  }
 
->>>>>>> 474735ed3097dedfe6d38cd130bf604770133858
 const character = new Sprite(textures.character);
 character.pos.x = 120;
 character.pos.y = 400;
@@ -457,8 +454,6 @@ function loopy(ms) {
          }*/
 
          if (mino.health <= 0) {
-<<<<<<< HEAD
-=======
             item.pos.x = mino.pos.x;
             item.pos.y = mino.pos.y;
             item.frame.y = getRandomIntInclusive(0,3);
@@ -474,7 +469,6 @@ function loopy(ms) {
          }
          xp.text = `${currentxp}/${nextLv}`;
          currentLv.text = `${level}`;
->>>>>>> 474735ed3097dedfe6d38cd130bf604770133858
             //drop axe
             const item = new TileSprite(textures.weaponTiles,137,137);
             let thing = null;
@@ -511,20 +505,8 @@ function loopy(ms) {
             item.size.sx = 50;
             item.size.sy = 50;
          }
-<<<<<<< HEAD
-               inventory.children.forEach((item) => {
-               if(item) {
-               item.damage = item.frame.y +1;
-               item.pos.x = inventoryLocation; 
-               item.pos.y = h - 120;
-               item.size.sx = 50;
-               item.size.sy = 50;
-               }
-               inventoryLocation+=90;
-=======
          else { }
          inventoryLocation+=90;
->>>>>>> 474735ed3097dedfe6d38cd130bf604770133858
             }) 
             }
                        
