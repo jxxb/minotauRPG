@@ -64,14 +64,14 @@ let nextLv = 50 * level;
 let nextLvXp = 1.1;
 const xp = new Text(`${currentxp}/${nextLv}`,  {
    font: "12pt sans-serif",
-   fill: "Red",
+   fill: "white",
    align: "center"
  });
  xp.pos.x =w-35;
  xp.pos.y = 80;
  const currentLv = new Text(`${level}`,{
     font:"22pt sans-serif",
-    fill: "Black",
+    fill: "yellow",
     align: "center"
  } );
  currentLv.pos.x = w-35;
@@ -197,21 +197,23 @@ function walls() {
                }
             }
          }
-         //scene.add(background);
-         scene.add(hWalls);
-         scene.add(vWalls);
-         //scene.add(sword);
-         scene.add(enemyWeapons);
-         scene.add(weapon);
-         scene.add(character);
-         scene.add(minows);
-         scene.add(healthBar);
-         scene.add(inventoryBackground);
-         scene.add(inventory);
-         scene.add(xp);
-         scene.add(currentLv);
       })
       .catch(err => console.log(err));
+}
+
+function init() {
+   scene.add(background);
+   scene.add(hWalls);
+   scene.add(vWalls);
+   scene.add(enemyWeapons);
+   scene.add(weapon);
+   scene.add(character);
+   scene.add(minows);
+   scene.add(healthBar);
+   scene.add(inventoryBackground);
+   scene.add(inventory);
+   scene.add(xp);
+   scene.add(currentLv);
 }
 
 const minows = new Container();
@@ -243,7 +245,6 @@ function spawnMino(x, y, speed) {
          minohealthBar.dead = true;
       }
 }
-   
    mino.update = function (dt) {
       let dx = 0;
       let dy = 0;
@@ -254,8 +255,6 @@ function spawnMino(x, y, speed) {
       let differenceY = Math.abs(character.pos.y - mino.pos.y);
 
       if (differenceX > differenceY) {
-         // mino.size.sx = 45;
-         // mino.size.sy = 54;
          if (character.pos.x < mino.pos.x) {
             dx = -100;
             textures.mino.img.src = 'images/enemy/Enemy-left.png'
@@ -265,8 +264,6 @@ function spawnMino(x, y, speed) {
          }
          dy = 0;
       } else if (differenceX < differenceY) {
-         // mino.size.sx = 54;
-         // mino.size.sy = 45;
          if (character.pos.y < mino.pos.y) {
             dy = -100;
             textures.mino.img.src = 'images/enemy/Enemy.png'
@@ -282,9 +279,6 @@ function spawnMino(x, y, speed) {
    };
    minows.add(mino);
 }
-
-
-
 
 weapon.pos.x = character.pos.x - 80;
 weapon.pos.y = character.pos.y - 110;
@@ -337,8 +331,9 @@ function getRandomIntInclusive(min, max) {
    return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
 }
 
-scene.add(background);
+//adding all elements
 walls();
+init();
 
 function loopy(ms) {
    requestAnimationFrame(loopy);
@@ -415,19 +410,22 @@ function loopy(ms) {
       let dy = mino.pos.y + mino.size.sy / 2 - (character.pos.y + character.size.sy / 2);
       if (Math.sqrt(dx * dx + dy * dy) < (mino.size.sx / 2 + character.size.sx / 2)) {
          character.health -=mino.damage;
-         if (mino.texture.img.src == "images/enemy/Enemy.png") {
-            console.log(mino.texture.img.src);
-            character.pos.x += mino.damage * 5;
+         /*if (mino.texture.img.src == "http://127.0.0.1:5500/images/enemy/Enemy.png") {
+            //push right
+            character.pos.x += mino.damage * 3;
          }
-         else if (mino.texture.img.src == "images/enemy/Enemy-down.png") {
-            character.pos.x -= mino.damage * 5;
+         else if (mino.texture.img.src == "http://127.0.0.1:5500/images/enemy/Enemy-down.png") {
+            //move left
+            character.pos.x -= mino.damage * 3;
          }
-         else if (mino.texture.img.src == "images/enemy/Enemy-left.png") {
-            character.pos.y += mino.damage * 5;
+         else if (mino.texture.img.src == "http://127.0.0.1:5500/images/enemy/Enemy-left.png") {
+            //character push down
+            character.pos.y += mino.damage * 3;
          } 
-         else if (mino.texture.img.src == "images/enemy/Enemy-right.png") {
-            character.pos.y -= mino.damage * 5;
-         }
+         else if (mino.texture.img.src == "http://127.0.0.1:5500/images/enemy/Enemy-right.png") {
+            //pushes up
+            character.pos.y -= mino.damage * 3;
+         }*/
       }
 
       if(character.health <= 0) {
@@ -443,18 +441,19 @@ function loopy(ms) {
       dy = mino.pos.y + mino.size.sy / 2 - (weapon.pos.y + weapon.size.sy / 2);
       if (weapon.visible && Math.sqrt(dx * dx + dy * dy) < (mino.size.sx / 2 + weapon.size.sx / 2)) {
          mino.health -= weapon.damage;
-         /*if (weapon.frame.x == 0) {
-            mino.pos.x += weapon.damage * 5;
+         if (weapon.frame.x == 0) {
+            mino.pos.y -= weapon.damage * 8;
          }
          else if (weapon.frame.x == 1) {
-            mino.pos.x -= weapon.damage * 5;
+            //console.log(weapon.frame.x);
+            mino.pos.x += weapon.damage * 8;
          }
          else if (weapon.frame.x == 2) {
-            mino.pos.y += weapon.damage * 5;
+            mino.pos.y += weapon.damage * 8;
          } 
          else if (weapon.frame.x == 3) {
-            mino.pos.y -= weapon.damage * 5;
-         }*/
+            mino.pos.x -= weapon.damage * 8;
+         }
 
          const item = new TileSprite(textures.weaponTiles,137,137);
 
