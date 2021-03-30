@@ -18,13 +18,15 @@ const {
   Inventory,
 } = src;
 
+const setup = new Setup();
+let initial;
 //game setup
-const w = 800;
-const h = 600;
-const columns = 10;
-const rows = 10;
-const cellW = w / columns;
-const cellH = h / rows;
+const w = setup.w;
+const h = setup.h;
+const columns = setup.columns;
+const rows = setup.rows;
+const cellW = setup.cellW;
+const cellH = setup.cellH;
 let itemMultiple = 0;
 
 const renderer = new CanvasRenderer(w, h);
@@ -57,6 +59,10 @@ inventoryBackground.pos.x = -5;
 inventoryBackground.pos.y = h - 96;
 inventoryBackground.size.sx = w + 15;
 inventoryBackground.size.sy = 100;
+
+function initialize() {
+   initial = user.getMassStorage();
+}
 
 let currentxp = 0;
 let level = 1;
@@ -334,6 +340,35 @@ function getRandomIntInclusive(min, max) {
 //adding all elements
 walls();
 init();
+initialize();
+
+//Gather maze data and call ExternalServices' saveMaze function
+//This function is being called by the user clicking a button on gamepage.html
+document.getElementById('save').addEventListener("click", saveMaze);
+function saveMaze() {
+   var enemyList = new Array();
+   for (let min of minows.children) {
+      enemyList.push({
+         pos: min.pos,
+         health: min.health,
+         maxHealth: min.startingHealth,
+      });
+   }
+   // console.log("save");
+
+   maze.saveMaze({
+      enemyList: enemyList,
+      userID: user.getUserInfo()._id, //The logged in user ID
+      playerPosition: character.pos, //Object containing x and y pos of the player
+      playerHealth: character.health, //Current health of the player
+      playerMaxHealth: character.startingHealth, //Max health of the player
+      currentXP: currentxp, //Not stored as part of the character currently
+      playerLevel: level, //Not stored as part of the character currently
+      inventory: inventory.children,
+      mazeId: user.getActualMazeId(), //The ID of the maze
+      token: user.getUserToken(),
+   });
+}
 
 function loopy(ms) {
    requestAnimationFrame(loopy);
@@ -410,7 +445,7 @@ function loopy(ms) {
       let dy = mino.pos.y + mino.size.sy / 2 - (character.pos.y + character.size.sy / 2);
       if (Math.sqrt(dx * dx + dy * dy) < (mino.size.sx / 2 + character.size.sx / 2)) {
          character.health -=mino.damage;
-         /*if (mino.texture.img.src == "http://127.0.0.1:5500/images/enemy/Enemy.png") {
+         if (mino.texture.img.src == "http://127.0.0.1:5500/images/enemy/Enemy.png") {
             //push right
             character.pos.x += mino.damage * 3;
          }
@@ -425,7 +460,7 @@ function loopy(ms) {
          else if (mino.texture.img.src == "http://127.0.0.1:5500/images/enemy/Enemy-right.png") {
             //pushes up
             character.pos.y -= mino.damage * 3;
-         }*/
+         }
       }
 
       if(character.health <= 0) {
@@ -474,16 +509,6 @@ function loopy(ms) {
          xp.text = `${currentxp}/${nextLv}`;
          currentLv.text = `${level}`;
             //drop axe
-            
-            let thing = null;
-            
-            enemyWeapons.add(item);
-            item.pos.x = mino.pos.x;
-            item.pos.y = mino.pos.y;
-            item.frame.y = getRandomIntInclusive(0,3);
-            item.size.sx = 100;
-            item.size.sy = 100;
-            item.visible = true;
             mino.dead = true;
          }
       }
