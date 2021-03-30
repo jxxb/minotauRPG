@@ -50,11 +50,11 @@ export default class ExternalServices {
         
         const APIResponse = await fetch(base_url + action, options).then(convertToJson);
         let gridArray = [];
-        localStorage.setItem('massStorage', JSON.stringify({
-            maze: fwe,///,
-            playerPos: wejio,
+        // localStorage.setItem('massStorage', JSON.stringify({
+        //     maze: fwe,///,
+        //     playerPos: wejio,
 
-        }));
+        // }));
         console.log(APIResponse);
         singleGridArray = APIResponse.maze;
         APIResponse.maze.forEach((cell) => {
