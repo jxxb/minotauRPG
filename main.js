@@ -64,24 +64,24 @@ let currentxp;
 let level;
 const character = new Sprite(textures.character);
 
-let currentxp = 0;
-let level = 1;
-let nextLv = 50 * level;
-let nextLvXp = 1.1;
-const xp = new Text(`${currentxp}/${nextLv}`,  {
-   font: "12pt sans-serif",
-   fill: "white",
-   align: "center"
- });
- xp.pos.x =w-35;
- xp.pos.y = 80;
- const currentLv = new Text(`${level}`,{
-    font:"22pt sans-serif",
-    fill: "yellow",
-    align: "center"
- } );
- currentLv.pos.x = w-35;
- currentLv.pos.y = 50;
+// let currentxp = 0;
+// let level = 1;
+// let nextLv = 50 * level;
+// let nextLvXp = 1.1;
+// const xp = new Text(`${currentxp}/${nextLv}`,  {
+//    font: "12pt sans-serif",
+//    fill: "white",
+//    align: "center"
+//  });
+//  xp.pos.x =w-35;
+//  xp.pos.y = 80;
+//  const currentLv = new Text(`${level}`,{
+//     font:"22pt sans-serif",
+//     fill: "yellow",
+//     align: "center"
+//  } );
+//  currentLv.pos.x = w-35;
+//  currentLv.pos.y = 50;
 
 
 // character.pos.x = 120;
@@ -374,9 +374,9 @@ const xp = new Text(`${currentxp}/${nextLv}`,  {
     return Math.round(a);
  }
 //adding all elements
-walls();
+// walls();
+// initialize();
 init();
-initialize();
 
 //Gather maze data and call ExternalServices' saveMaze function
 //This function is being called by the user clicking a button on gamepage.html
