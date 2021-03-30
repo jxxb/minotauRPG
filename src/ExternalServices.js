@@ -50,7 +50,13 @@ export default class ExternalServices {
         
         const APIResponse = await fetch(base_url + action, options).then(convertToJson);
         let gridArray = [];
+        // localStorage.setItem('massStorage', JSON.stringify({
+        //     maze: fwe,///,
+        //     playerPos: wejio,
+
+        // }));
         console.log(APIResponse);
+        singleGridArray = APIResponse.maze;
         APIResponse.maze.forEach((cell) => {
             if (cell.vertical && cell.horizontal) {
                 // 'bottomRight'
@@ -69,8 +75,8 @@ export default class ExternalServices {
             gridArray.push(cell);
         })
 
-        console.log(gridArray);
-        singleGridArray = gridArray;
+        // console.log(gridArray);
+        // singleGridArray = gridArray;
         function listToMatrix(list, numElements) {
             let matrix = [], i, j;
 
@@ -122,26 +128,33 @@ export default class ExternalServices {
 
 
 
-    saveMaze(enemies, userId, playerIndex, mazeId) {
+    saveMaze(game) {
         if (singleGridArray == undefined) {
             singleGridArray = new Array();
         }
         const options = {
             method: 'PATCH',
             body:JSON.stringify({
-                maze: singleGridArray,
-                enemyList: enemies,
-                id: userId,
-                userIndex: playerIndex,
-                mazeId: mazeId,
+                userId: game.userId,
+                game: {
+                    _id: game.mazeId,
+                    maze: game.singleGridArray,
+                    enemyList: game.enemies,
+                    playerPosition: game.playerPos,
+                    playerHealth: game.playerHealth,
+                    playerMaxHealth: game.playerMaxHealth,
+                    inventory: game.inventory,
+                    currentXp: game.currentXp,
+                    playerLevel: game.playerLevel,
+                },
             }),
             headers: {
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization' : 'Bearer ' + game.token
             },
         };
         console.log(options);
     
-        // const APIResponse = await fetch(base_url + 'saveGame', options).then(convertToJson);
         // fetch(base_url + 'saveGame', options);
     }
 
