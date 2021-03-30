@@ -50,11 +50,18 @@ export default class ExternalServices {
         
         const APIResponse = await fetch(base_url + action, options).then(convertToJson);
         let gridArray = [];
-        // localStorage.setItem('massStorage', JSON.stringify({
-        //     maze: fwe,///,
-        //     playerPos: wejio,
+        localStorage.setItem('massStorage', JSON.stringify({
+            maze: APIResponse.maze,
+            enemyList: APIResponse.enemyList,
+            inventory: APIResponse.inventory,
+            playerHealth: APIResponse.playerHealth,
+            playerMaxHealth: APIResponse.playerMaxHealth,
+            playerXp: APIResponse.playerExperience,
+            playerLevel: APIResponse.playerLevel,
+            playerPosition: APIResponse.playerPosition,
+            gameId: APIResponse._id,
 
-        // }));
+        }));
         console.log(APIResponse);
         singleGridArray = APIResponse.maze;
         APIResponse.maze.forEach((cell) => {
@@ -138,8 +145,8 @@ export default class ExternalServices {
                 userId: game.userId,
                 game: {
                     _id: game.mazeId,
-                    maze: game.singleGridArray,
-                    enemyList: game.enemies,
+                    maze: singleGridArray,
+                    enemyList: game.enemyList,
                     playerPosition: game.playerPos,
                     playerHealth: game.playerHealth,
                     playerMaxHealth: game.playerMaxHealth,
@@ -155,7 +162,13 @@ export default class ExternalServices {
         };
         console.log(options);
     
-        // fetch(base_url + 'saveGame', options);
+        fetch(base_url + 'saveGame', options)
+        .then((x) => {
+            return x.json();
+        })
+        .then((response) => {
+            console.log(response);
+        })
     }
 
     async loginRequest(creds) {

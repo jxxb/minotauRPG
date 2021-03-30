@@ -37,7 +37,6 @@ class CanvasRenderer {
               child.tileW, child.tileH     //destination width & height
             );
             if(child.quantity){
-            console.log(child.quantity);
             const { font, fill, align } = child.quantity.style;
             if (font) ctx.font = font;
             if (fill) ctx.fillStyle = fill;
