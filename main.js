@@ -45,13 +45,10 @@ const textures = {
 };
 const maze = new ExternalServices();
 
-<<<<<<< HEAD
-=======
 const background = new Sprite(textures.background);
 background.size.sx = w;
 background.size.sy = h;
 
->>>>>>> 025bf0d4987ed5bf87be2d4814550d7437226d56
 const enemyWeapons = new Container();
 const weapon = new TileSprite(textures.weaponTiles, 137, 137);
 weapon.damage = 1;
@@ -64,7 +61,7 @@ inventoryBackground.size.sx = w + 15;
 inventoryBackground.size.sy = 100;
 
 function initialize() {
-   initial = User.getMassStorage();
+   initial = user.getMassStorage();
 }
 
 let currentxp = 0;
@@ -350,7 +347,6 @@ function getRandomIntInclusive(min, max) {
 walls();
 initialize();
 
-<<<<<<< HEAD
 //Gather maze data and call ExternalServices' saveMaze function
 //This function is being called by the user clicking a button on gamepage.html
 document.getElementById('save').addEventListener("click", saveMaze);
@@ -365,20 +361,20 @@ function saveMaze() {
    }
    // console.log("save");
 
-   maze.saveMaze(
-      enemyList,
-      user.getUserInfo()._id, //The logged in user ID
-      character.pos, //Object containing x and y pos of the player
-      character.health, //Current health of the player
-      character.startingHealth, //Max health of the player
-      currentxp, //Not stored as part of the character currently
-      level, //Not stored as part of the character currently
-      user.getActualMazeId(), //The ID of the maze
-   );
+   maze.saveMaze({
+      enemyList: enemyList,
+      userID: user.getUserInfo()._id, //The logged in user ID
+      playerPosition: character.pos, //Object containing x and y pos of the player
+      playerHealth: character.health, //Current health of the player
+      playerMaxHealth: character.startingHealth, //Max health of the player
+      currentXP: currentxp, //Not stored as part of the character currently
+      playerLevel: level, //Not stored as part of the character currently
+      inventory: inventory.children,
+      mazeId: user.getActualMazeId(), //The ID of the maze
+      token: user.getUserToken(),
+   });
 }
 
-=======
->>>>>>> 025bf0d4987ed5bf87be2d4814550d7437226d56
 function loopy(ms) {
    requestAnimationFrame(loopy);
    const t = ms / 1000;

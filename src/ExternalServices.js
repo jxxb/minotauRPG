@@ -128,28 +128,29 @@ export default class ExternalServices {
 
 
 
-    saveMaze(enemies, userId, playerPos, playerHealth, playerMaxHealth, currentXp, playerLevel, mazeId) {
+    saveMaze(game) {
         if (singleGridArray == undefined) {
             singleGridArray = new Array();
         }
         const options = {
             method: 'PATCH',
             body:JSON.stringify({
-                userId: userId,
+                userId: game.userId,
                 game: {
-                    _id: mazeId,
-                    maze: singleGridArray,
-                    enemyList: enemies,
-                    userIndex: playerPos,
-                    playerHealth: playerHealth,
-                    playerMaxHealth, playerMaxHealth,
-                    currentXp: currentXp,
-                    playerLevel: playerLevel,
-                    mazeId: mazeId,
+                    _id: game.mazeId,
+                    maze: game.singleGridArray,
+                    enemyList: game.enemies,
+                    playerPosition: game.playerPos,
+                    playerHealth: game.playerHealth,
+                    playerMaxHealth: game.playerMaxHealth,
+                    inventory: game.inventory,
+                    currentXp: game.currentXp,
+                    playerLevel: game.playerLevel,
                 },
             }),
             headers: {
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization' : 'Bearer ' + game.token
             },
         };
         console.log(options);
