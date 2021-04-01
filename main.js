@@ -60,45 +60,52 @@ inventoryBackground.pos.y = h - 96;
 inventoryBackground.size.sx = w + 15;
 inventoryBackground.size.sy = 100;
 
-function initialize() {
-   initial = user.getMassStorage();
-}
-
-let currentxp = 0;
-let level = 1;
-let nextLv = 50 * level;
-let nextLvXp = 1.1;
-const xp = new Text(`${currentxp}/${nextLv}`,  {
-   font: "12pt sans-serif",
-   fill: "white",
-   align: "center"
- });
- xp.pos.x =w-35;
- xp.pos.y = 80;
- const currentLv = new Text(`${level}`,{
-    font:"22pt sans-serif",
-    fill: "yellow",
-    align: "center"
- } );
- currentLv.pos.x = w-35;
- currentLv.pos.y = 50;
-
- function exponential(a,b){
-    for(let i=1; i<=b; i++){
-      a*=a;
-    }
-    return Math.round(a);
- }
-
+let currentxp;
+let level;
 const character = new Sprite(textures.character);
-character.pos.x = 120;
-character.pos.y = 400;
+
+// let currentxp = 0;
+// let level = 1;
+// let nextLv = 50 * level;
+// let nextLvXp = 1.1;
+// const xp = new Text(`${currentxp}/${nextLv}`,  {
+//    font: "12pt sans-serif",
+//    fill: "white",
+//    align: "center"
+//  });
+//  xp.pos.x =w-35;
+//  xp.pos.y = 80;
+//  const currentLv = new Text(`${level}`,{
+//     font:"22pt sans-serif",
+//     fill: "yellow",
+//     align: "center"
+//  } );
+//  currentLv.pos.x = w-35;
+//  currentLv.pos.y = 50;
+
+
+// character.pos.x = 120;
+// character.pos.y = 400;
 character.size.sx = 45;
 character.size.sy = 45;
 character.health = 800;
 character.startingHealth = 800;
 character.center.x = character.pos.x + character.size.sx/2;
 character.center.y = character.pos.y + character.size.sy/2;
+
+
+async function initialize() {
+
+   await walls();
+   let initial = user.getMassStorage();
+   console.log(initial);
+   currentxp = initial.playerXp || 0;
+   level = initial.playerLevel || 1;
+   console.log(currentxp);
+   console.log(level);
+   character.pos.x = initial.playerPosition.x
+   character.pos.y = initial.playerPosition.y
+}
 
 character.update = function (dt, t) {
    this.pos.x += controls.x * dt * 200;
@@ -177,10 +184,10 @@ function spawnHWalls(x, y) {
 }
 
 
-function walls() {
+async function walls() {
 
    const token = user.getUserToken() || "";
-   maze.getMaze(user.getActualMazeId(),token).then(mazeWalls => {
+   await maze.getMaze(user.getActualMazeId(),token).then(mazeWalls => {
          for (let i = 0; i < mazeWalls.length; i++) {
             for (let j = 0; j < mazeWalls[i].length; j++) {
                //type 1 = br
@@ -288,6 +295,8 @@ function spawnMino(x, y, speed) {
    minows.add(mino);
 }
 
+
+
 weapon.pos.x = character.pos.x - 80;
 weapon.pos.y = character.pos.y - 110;
 
@@ -339,10 +348,37 @@ function getRandomIntInclusive(min, max) {
    return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
 }
 
+//scene.add(background);
+// walls();
+await initialize();
+
+let nextLv = 50 * level;
+let nextLvXp = 1.1;
+const xp = new Text(`${currentxp}/${nextLv}`,  {
+   font: "12pt sans-serif",
+   fill: "Red",
+   align: "center"
+ });
+ xp.pos.x =w-35;
+ xp.pos.y = 80;
+ const currentLv = new Text(`${level}`,{
+    font:"22pt sans-serif",
+    fill: "Black",
+    align: "center"
+ } );
+ currentLv.pos.x = w-35;
+ currentLv.pos.y = 50;
+
+ function exponential(a,b){
+    for(let i=1; i<=b; i++){
+      a*=a;
+    }
+    return Math.round(a);
+ }
 //adding all elements
-walls();
+// walls();
+// initialize();
 init();
-initialize();
 
 //Gather maze data and call ExternalServices' saveMaze function
 //This function is being called by the user clicking a button on gamepage.html
@@ -360,14 +396,14 @@ function saveMaze() {
 
    maze.saveMaze({
       enemyList: enemyList,
-      userID: user.getUserInfo()._id, //The logged in user ID
+      userId: user.getUserInfo()._id, //The logged in user ID
       playerPosition: character.pos, //Object containing x and y pos of the player
       playerHealth: character.health, //Current health of the player
       playerMaxHealth: character.startingHealth, //Max health of the player
       currentXP: currentxp, //Not stored as part of the character currently
       playerLevel: level, //Not stored as part of the character currently
       inventory: inventory.children,
-      mazeId: user.getActualMazeId(), //The ID of the maze
+      mazeId: user.getMassStorage().gameId, //The ID of the maze
       token: user.getUserToken(),
    });
 }
