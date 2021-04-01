@@ -356,14 +356,14 @@ let nextLv = 50 * level;
 let nextLvXp = 1.1;
 const xp = new Text(`${currentxp}/${nextLv}`,  {
    font: "12pt sans-serif",
-   fill: "Red",
+   fill: "yellow",
    align: "center"
  });
  xp.pos.x =w-35;
  xp.pos.y = 80;
  const currentLv = new Text(`${level}`,{
     font:"22pt sans-serif",
-    fill: "Black",
+    fill: "white",
     align: "center"
  } );
  currentLv.pos.x = w-35;
