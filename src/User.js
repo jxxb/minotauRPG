@@ -34,6 +34,10 @@ export default class User{
         localStorage.setItem('actualMaze',id);
     }
 
+    getMassStorage() {
+        return JSON.parse(localStorage.getItem('massStorage'));
+    }
+
     getActualMazeId(){
         return localStorage.getItem('actualMaze');
     }

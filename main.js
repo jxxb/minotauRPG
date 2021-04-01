@@ -18,13 +18,15 @@ const {
   Inventory,
 } = src;
 
+const setup = new Setup();
+let initial;
 //game setup
-const w = 800;
-const h = 600;
-const columns = 10;
-const rows = 10;
-const cellW = w / columns;
-const cellH = h / rows;
+const w = setup.w;
+const h = setup.h;
+const columns = setup.columns;
+const rows = setup.rows;
+const cellW = setup.cellW;
+const cellH = setup.cellH;
 let itemMultiple = 0;
 
 const renderer = new CanvasRenderer(w, h);
@@ -58,41 +60,52 @@ inventoryBackground.pos.y = h - 96;
 inventoryBackground.size.sx = w + 15;
 inventoryBackground.size.sy = 100;
 
-let currentxp = 0;
-let level = 1;
-let nextLv = 50 * level;
-let nextLvXp = 1.1;
-const xp = new Text(`${currentxp}/${nextLv}`,  {
-   font: "12pt sans-serif",
-   fill: "Red",
-   align: "center"
- });
- xp.pos.x =w-35;
- xp.pos.y = 80;
- const currentLv = new Text(`${level}`,{
-    font:"22pt sans-serif",
-    fill: "Black",
-    align: "center"
- } );
- currentLv.pos.x = w-35;
- currentLv.pos.y = 50;
-
- function exponential(a,b){
-    for(let i=1; i<=b; i++){
-      a*=a;
-    }
-    return Math.round(a);
- }
-
+let currentxp;
+let level;
 const character = new Sprite(textures.character);
-character.pos.x = 120;
-character.pos.y = 400;
+
+// let currentxp = 0;
+// let level = 1;
+// let nextLv = 50 * level;
+// let nextLvXp = 1.1;
+// const xp = new Text(`${currentxp}/${nextLv}`,  {
+//    font: "12pt sans-serif",
+//    fill: "white",
+//    align: "center"
+//  });
+//  xp.pos.x =w-35;
+//  xp.pos.y = 80;
+//  const currentLv = new Text(`${level}`,{
+//     font:"22pt sans-serif",
+//     fill: "yellow",
+//     align: "center"
+//  } );
+//  currentLv.pos.x = w-35;
+//  currentLv.pos.y = 50;
+
+
+// character.pos.x = 120;
+// character.pos.y = 400;
 character.size.sx = 45;
 character.size.sy = 45;
 character.health = 800;
 character.startingHealth = 800;
 character.center.x = character.pos.x + character.size.sx/2;
 character.center.y = character.pos.y + character.size.sy/2;
+
+
+async function initialize() {
+
+   await walls();
+   let initial = user.getMassStorage();
+   console.log(initial);
+   currentxp = initial.playerXp || 0;
+   level = initial.playerLevel || 1;
+   console.log(currentxp);
+   console.log(level);
+   character.pos.x = initial.playerPosition.x
+   character.pos.y = initial.playerPosition.y
+}
 
 character.update = function (dt, t) {
    this.pos.x += controls.x * dt * 200;
@@ -169,10 +182,10 @@ function spawnHWalls(x, y) {
 }
 
 
-function walls() {
+async function walls() {
 
    const token = user.getUserToken() || "";
-   maze.getMaze(user.getActualMazeId(),token).then(mazeWalls => {
+   await maze.getMaze(user.getActualMazeId(),token).then(mazeWalls => {
          for (let i = 0; i < mazeWalls.length; i++) {
             for (let j = 0; j < mazeWalls[i].length; j++) {
                //type 1 = br
@@ -197,21 +210,23 @@ function walls() {
                }
             }
          }
-         //scene.add(background);
-         scene.add(hWalls);
-         scene.add(vWalls);
-         //scene.add(sword);
-         scene.add(enemyWeapons);
-         scene.add(weapon);
-         scene.add(character);
-         scene.add(minows);
-         scene.add(healthBar);
-         scene.add(inventoryBackground);
-         scene.add(inventory);
-         scene.add(xp);
-         scene.add(currentLv);
       })
       .catch(err => console.log(err));
+}
+
+function init() {
+   scene.add(background);
+   scene.add(hWalls);
+   scene.add(vWalls);
+   scene.add(enemyWeapons);
+   scene.add(weapon);
+   scene.add(character);
+   scene.add(minows);
+   scene.add(healthBar);
+   scene.add(inventoryBackground);
+   scene.add(inventory);
+   scene.add(xp);
+   scene.add(currentLv);
 }
 
 const minows = new Container();
@@ -243,7 +258,6 @@ function spawnMino(x, y, speed) {
          minohealthBar.dead = true;
       }
 }
-   
    mino.update = function (dt) {
       let dx = 0;
       let dy = 0;
@@ -254,8 +268,6 @@ function spawnMino(x, y, speed) {
       let differenceY = Math.abs(character.pos.y - mino.pos.y);
 
       if (differenceX > differenceY) {
-         // mino.size.sx = 45;
-         // mino.size.sy = 54;
          if (character.pos.x < mino.pos.x) {
             dx = -100;
             textures.mino.img.src = 'images/enemy/Enemy-left.png'
@@ -265,8 +277,6 @@ function spawnMino(x, y, speed) {
          }
          dy = 0;
       } else if (differenceX < differenceY) {
-         // mino.size.sx = 54;
-         // mino.size.sy = 45;
          if (character.pos.y < mino.pos.y) {
             dy = -100;
             textures.mino.img.src = 'images/enemy/Enemy.png'
@@ -282,7 +292,6 @@ function spawnMino(x, y, speed) {
    };
    minows.add(mino);
 }
-
 
 
 
@@ -338,7 +347,64 @@ function getRandomIntInclusive(min, max) {
 }
 
 //scene.add(background);
-walls();
+// walls();
+await initialize();
+
+let nextLv = 50 * level;
+let nextLvXp = 1.1;
+const xp = new Text(`${currentxp}/${nextLv}`,  {
+   font: "12pt sans-serif",
+   fill: "Red",
+   align: "center"
+ });
+ xp.pos.x =w-35;
+ xp.pos.y = 80;
+ const currentLv = new Text(`${level}`,{
+    font:"22pt sans-serif",
+    fill: "Black",
+    align: "center"
+ } );
+ currentLv.pos.x = w-35;
+ currentLv.pos.y = 50;
+
+ function exponential(a,b){
+    for(let i=1; i<=b; i++){
+      a*=a;
+    }
+    return Math.round(a);
+ }
+//adding all elements
+// walls();
+// initialize();
+init();
+
+//Gather maze data and call ExternalServices' saveMaze function
+//This function is being called by the user clicking a button on gamepage.html
+document.getElementById('save').addEventListener("click", saveMaze);
+function saveMaze() {
+   var enemyList = new Array();
+   for (let min of minows.children) {
+      enemyList.push({
+         pos: min.pos,
+         health: min.health,
+         maxHealth: min.startingHealth,
+      });
+   }
+   // console.log("save");
+
+   maze.saveMaze({
+      enemyList: enemyList,
+      userId: user.getUserInfo()._id, //The logged in user ID
+      playerPosition: character.pos, //Object containing x and y pos of the player
+      playerHealth: character.health, //Current health of the player
+      playerMaxHealth: character.startingHealth, //Max health of the player
+      currentXP: currentxp, //Not stored as part of the character currently
+      playerLevel: level, //Not stored as part of the character currently
+      inventory: inventory.children,
+      mazeId: user.getMassStorage().gameId, //The ID of the maze
+      token: user.getUserToken(),
+   });
+}
 
 function loopy(ms) {
    requestAnimationFrame(loopy);
@@ -415,18 +481,21 @@ function loopy(ms) {
       let dy = mino.pos.y + mino.size.sy / 2 - (character.pos.y + character.size.sy / 2);
       if (Math.sqrt(dx * dx + dy * dy) < (mino.size.sx / 2 + character.size.sx / 2)) {
          character.health -=mino.damage;
-         if (mino.texture.img.src == "images/enemy/Enemy.png") {
-
-            character.pos.x += mino.damage * 5;
+         if (mino.texture.img.src == "http://127.0.0.1:5500/images/enemy/Enemy.png") {
+            //push right
+            character.pos.x += mino.damage * 3;
          }
-         else if (mino.texture.img.src == "images/enemy/Enemy-down.png") {
-            character.pos.x -= mino.damage * 5;
+         else if (mino.texture.img.src == "http://127.0.0.1:5500/images/enemy/Enemy-down.png") {
+            //move left
+            character.pos.x -= mino.damage * 3;
          }
-         else if (mino.texture.img.src == "images/enemy/Enemy-left.png") {
-            character.pos.y += mino.damage * 5;
+         else if (mino.texture.img.src == "http://127.0.0.1:5500/images/enemy/Enemy-left.png") {
+            //character push down
+            character.pos.y += mino.damage * 3;
          } 
-         else if (mino.texture.img.src == "images/enemy/Enemy-right.png") {
-            character.pos.y -= mino.damage * 5;
+         else if (mino.texture.img.src == "http://127.0.0.1:5500/images/enemy/Enemy-right.png") {
+            //pushes up
+            character.pos.y -= mino.damage * 3;
          }
       }
 
@@ -443,18 +512,19 @@ function loopy(ms) {
       dy = mino.pos.y + mino.size.sy / 2 - (weapon.pos.y + weapon.size.sy / 2);
       if (weapon.visible && Math.sqrt(dx * dx + dy * dy) < (mino.size.sx / 2 + weapon.size.sx / 2)) {
          mino.health -= weapon.damage;
-         /*if (weapon.frame.x == 0) {
-            mino.pos.x += weapon.damage * 5;
+         if (weapon.frame.x == 0) {
+            mino.pos.y -= weapon.damage * 8;
          }
          else if (weapon.frame.x == 1) {
-            mino.pos.x -= weapon.damage * 5;
+            //console.log(weapon.frame.x);
+            mino.pos.x += weapon.damage * 8;
          }
          else if (weapon.frame.x == 2) {
-            mino.pos.y += weapon.damage * 5;
+            mino.pos.y += weapon.damage * 8;
          } 
          else if (weapon.frame.x == 3) {
-            mino.pos.y -= weapon.damage * 5;
-         }*/
+            mino.pos.x -= weapon.damage * 8;
+         }
 
          const item = new TileSprite(textures.weaponTiles,137,137);
 
