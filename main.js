@@ -121,7 +121,9 @@ character.update = function (dt, t) {
    //character screen boundaries
    if (this.pos.x < 0) {
       this.pos.x = w - this.size.sx;
-      
+      //save curent maze
+      //clear curent hWalls and Vwalls
+      //render new maze
    }
    if (this.pos.x > w - this.size.sx) {
       this.pos.x = 0;
