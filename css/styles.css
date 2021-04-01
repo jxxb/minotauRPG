@@ -51,6 +51,9 @@ button:hover, #save:hover {
 }
 h1{
    color:#A6A8B6;
+   font-size:50px;
+   margin:0;
+   padding:15px 0px 0px 10px;
 }
 .intro, .form{
    width:350px;
