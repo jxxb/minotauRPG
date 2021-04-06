@@ -140,7 +140,9 @@ character.update = function (dt, t) {
    //character screen boundaries
    if (this.pos.x < 0) {
       this.pos.x = w - this.size.sx;
-      
+      //save curent maze
+      //clear curent hWalls and Vwalls
+      //render new maze
    }
    if (this.pos.x > w - this.size.sx) {
       this.pos.x = 0;
@@ -363,14 +365,14 @@ let nextLv = 50 * level;
 let nextLvXp = 1.1;
 const xp = new Text(`${currentxp}/${nextLv}`,  {
    font: "12pt sans-serif",
-   fill: "Red",
+   fill: "yellow",
    align: "center"
  });
  xp.pos.x =w-35;
  xp.pos.y = 80;
  const currentLv = new Text(`${level}`,{
     font:"22pt sans-serif",
-    fill: "Black",
+    fill: "white",
     align: "center"
  } );
  currentLv.pos.x = w-35;
