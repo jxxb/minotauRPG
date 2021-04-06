@@ -28,6 +28,7 @@ const rows = setup.rows;
 const cellW = setup.cellW;
 const cellH = setup.cellH;
 let itemMultiple = 0;
+let newRoom = false;
 
 const renderer = new CanvasRenderer(w, h);
 document.querySelector('#board').appendChild(renderer.view);
@@ -41,7 +42,7 @@ const textures = {
    mino: new Texture('images/enemy/Enemy.png'),
    vWall: new Texture('images/wall/wall_vertical.png'),
    hWall: new Texture('images/wall/wall_horizontal.png'),
-   weaponTiles: new Texture('images/weapons/weapons_sprite.png')
+   weaponTiles: new Texture('http://127.0.0.1:5500/images/weapons/weapons_sprite.png')
 };
 const maze = new ExternalServices();
 
@@ -63,29 +64,6 @@ inventoryBackground.size.sy = 100;
 let currentxp;
 let level;
 const character = new Sprite(textures.character);
-
-// let currentxp = 0;
-// let level = 1;
-// let nextLv = 50 * level;
-// let nextLvXp = 1.1;
-// const xp = new Text(`${currentxp}/${nextLv}`,  {
-//    font: "12pt sans-serif",
-//    fill: "white",
-//    align: "center"
-//  });
-//  xp.pos.x =w-35;
-//  xp.pos.y = 80;
-//  const currentLv = new Text(`${level}`,{
-//     font:"22pt sans-serif",
-//     fill: "yellow",
-//     align: "center"
-//  } );
-//  currentLv.pos.x = w-35;
-//  currentLv.pos.y = 50;
-
-
-// character.pos.x = 120;
-// character.pos.y = 400;
 character.size.sx = 45;
 character.size.sy = 45;
 character.health = 800;
@@ -102,8 +80,13 @@ async function initialize() {
    scene.add(vWalls);
    let initial = user.getMassStorage();
    console.log(initial);
-   currentxp = initial.playerXp || 0;
+   currentxp = initial.playerExperience || 0;
    level = initial.playerLevel || 1;
+   // initial.inventory.forEach((item) => {
+   //    inventory.add(item);
+   // })
+   console.log(currentxp);
+   console.log(level);
    character.pos.x = initial.playerPosition.x || 150;
    character.pos.y = initial.playerPosition.y || 400;
    for (let enemy of initial.enemyList) {
@@ -119,6 +102,85 @@ async function initialize() {
    // }
 }
 
+// const mazeArray = [];
+// mazeArray.push(walls());
+
+//const nextMaze;
+
+const healthBar = new Rectangle();
+healthBar.health = character.health;
+healthBar.startingHealth = character.startingHealth;
+healthBar.x = character.pos.x;
+healthBar.y = character.pos.y;
+
+healthBar.update = function (dt) {
+   healthBar.x = character.pos.x - healthBar.health/8 + (character.size.sx/2);
+   healthBar.y = character.pos.y - 20;
+   this.health = character.health;
+}
+//vertical wall containers
+const vWalls = new Container();
+//horizontal wall containers
+const hWalls = new Container();
+
+function spawnVWalls(x, y) {
+   const vWall = new Sprite(textures.vWall);
+   textures.vWall.img.src = 'images/wall/wall_vertical.png';
+   vWall.size.sx = 15;
+   vWall.size.sy = 60;
+   vWall.pos.x = x + cellW;
+   vWall.pos.y = y;
+   vWall.center.x = vWall.pos.x + vWall.size.sx/2;
+   vWall.center.y = vWall.pos.y + vWall.size.sy/2;
+   vWalls.add(vWall);
+}
+
+function spawnHWalls(x, y) {
+   const hWall = new Sprite(textures.hWall);
+   textures.hWall.img.src = 'images/wall/wall_horizontal.png';
+   hWall.size.sx = 95;
+   hWall.size.sy = 15;
+   hWall.pos.x = x;
+   hWall.pos.y = y + cellH;
+   hWall.center.x = hWall.pos.x + hWall.size.sx/2;
+   hWall.center.y = hWall.pos.y + hWall.size.sy/2;
+   hWalls.add(hWall);
+}
+
+//wall creation
+async function walls() {
+
+   const token = user.getUserToken() || "";
+   await maze.getMaze(user.getActualMazeId(),token).then(mazeWalls => {
+      for (let i = 0; i < mazeWalls.length; i++) {
+         for (let j = 0; j < mazeWalls[i].length; j++) {
+            //type 1 = br
+            if (mazeWalls[j][i] === 1) {
+               spawnVWalls(cellW * i, cellH * j);
+               spawnHWalls(cellW * i, cellH * j);
+            }
+            
+            //type 2 = right
+            if (mazeWalls[j][i] === 2) {
+               spawnVWalls(cellW * i, cellH * j);
+            }
+            
+            //type 3 = bottom
+            
+            if (mazeWalls[j][i] === 3) {
+               spawnHWalls(cellW * i, cellH * j);
+            }
+            //type 4 = empty
+            else {
+               
+            }
+         }
+      }
+   })
+   .catch(err => console.log(err));
+}
+
+//Character Behavior
 character.update = function (dt, t) {
    this.pos.x += controls.x * dt * 200;
    this.pos.y += controls.y * dt * 200;
@@ -137,7 +199,23 @@ character.update = function (dt, t) {
       textures.character.img.src = 'images/character/Character_down.png';
    }
 
-   //character screen boundaries
+   //character screen boundaries wrap
+   // if (
+   //    this.pos.x < 0 || 
+   //    this.pos.x > w - this.size.sx ||
+   //    this.pos.y < 0 ||
+   //    this.pos.y > h - this.size.sy
+   //    ) {
+   //       hWalls.children.forEach((hWall) => {
+   //          hWalls.remove(hWall);
+   //       })
+   //       vWalls.children.forEach((vWall) => {
+   //          vWalls.remove(vWall);
+   //       })
+   //    //if (next maze doesn't exist)
+   //      walls();
+   //    }
+
    if (this.pos.x < 0) {
       this.pos.x = w - this.size.sx;
       //save curent maze
@@ -155,78 +233,6 @@ character.update = function (dt, t) {
    }
 }
 
-const healthBar = new Rectangle();
-healthBar.health = character.health;
-healthBar.startingHealth = character.startingHealth;
-healthBar.x = character.pos.x;
-healthBar.y = character.pos.y;
-
-healthBar.update = function (dt) {
-   healthBar.x = character.pos.x - healthBar.health/8 + (character.size.sx/2);
-   healthBar.y = character.pos.y - 20;
-   this.health = character.health;
-}
-
-const vWalls = new Container();
-
-function spawnVWalls(x, y) {
-   const vWall = new Sprite(textures.vWall);
-   textures.vWall.img.src = 'images/wall/wall_vertical.png';
-   vWall.size.sx = 15;
-   vWall.size.sy = 60;
-   vWall.pos.x = x + cellW;
-   vWall.pos.y = y;
-   vWall.center.x = vWall.pos.x + vWall.size.sx/2;
-   vWall.center.y = vWall.pos.y + vWall.size.sy/2;
-   vWalls.add(vWall);
-}
-
-const hWalls = new Container();
-
-function spawnHWalls(x, y) {
-   const hWall = new Sprite(textures.hWall);
-   textures.hWall.img.src = 'images/wall/wall_horizontal.png';
-   hWall.size.sx = 95;
-   hWall.size.sy = 15;
-   hWall.pos.x = x;
-   hWall.pos.y = y + cellH;
-   hWall.center.x = hWall.pos.x + hWall.size.sx/2;
-   hWall.center.y = hWall.pos.y + hWall.size.sy/2;
-   hWalls.add(hWall);
-}
-
-
-async function walls() {
-
-   const token = user.getUserToken() || "";
-   await maze.getMaze(user.getActualMazeId(),token).then(mazeWalls => {
-         for (let i = 0; i < mazeWalls.length; i++) {
-            for (let j = 0; j < mazeWalls[i].length; j++) {
-               //type 1 = br
-               if (mazeWalls[j][i] === 1) {
-                  spawnVWalls(cellW * i, cellH * j);
-                  spawnHWalls(cellW * i, cellH * j);
-               }
-
-               //type 2 = right
-               if (mazeWalls[j][i] === 2) {
-                  spawnVWalls(cellW * i, cellH * j);
-               }
-
-               //type 3 = bottom
-
-               if (mazeWalls[j][i] === 3) {
-                  spawnHWalls(cellW * i, cellH * j);
-               }
-               //type 4 = empty
-               else {
-                  
-               }
-            }
-         }
-      })
-      .catch(err => console.log(err));
-}
 
 function init() {
    scene.add(enemyWeapons);
@@ -401,21 +407,20 @@ function saveMaze() {
          maxHealth: min.startingHealth,
       });
    }
-   console.log(inventory);
-   console.log(inventory.children[0].texture);
-   inventory.forEach((item) => {
-      item.texture = item.texture.img;
-      item.quantity = item.quantity.text;
-   });
+   // inventory.children.forEach((item) => {
+   //    item.texture = item.texture.img;
+   //    item.quantity = item.quantity.text;
+   // });
+   console.log(inventory.children);
    maze.saveMaze({
       enemyList: enemyList,
       userId: user.getUserInfo()._id, //The logged in user ID
       playerPosition: character.pos, //Object containing x and y pos of the player
       playerHealth: character.health, //Current health of the player
       playerMaxHealth: character.startingHealth, //Max health of the player
-      currentxp: currentxp, //Not stored as part of the character currently
+      currentXp: currentxp, //Not stored as part of the character currently
       playerLevel: level, //Not stored as part of the character currently
-      inventory: newInventory,//inventory.children,
+      //inventory: inventory.children,//inventory.children,
       mazeId: user.getMassStorage().gameId, //The ID of the maze
       token: user.getUserToken(),
    });

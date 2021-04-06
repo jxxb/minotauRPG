@@ -53,16 +53,15 @@ export default class ExternalServices {
         localStorage.setItem('massStorage', JSON.stringify({
             maze: APIResponse.maze,
             enemyList: APIResponse.enemyList,
-            inventory: APIResponse.ineventory,
+            //inventory: APIResponse.inventory,
             playerHealth: APIResponse.playerHealth,
             playerMaxHealth: APIResponse.playerMaxHealth,
-            playerXp: APIResponse.playerExperience,
+            playerExperience: APIResponse.playerExperience,
             playerLevel: APIResponse.playerLevel,
             playerPosition: APIResponse.playerPosition,
             gameId: APIResponse._id,
 
         }));
-        console.log(APIResponse);
         singleGridArray = APIResponse.maze;
         APIResponse.maze.forEach((cell) => {
             if (cell.vertical && cell.horizontal) {
@@ -103,37 +102,6 @@ export default class ExternalServices {
 
 
     };
-    //empty 
-    //bottom          hWalls
-    //v = false h = true
-
-    //right           vWalls
-    //bottomRight v & hWalls
-
-
-
-    // for(let i = 0; i < w; i++) {
-    //     for(let j = 0; j < h; j++) {
-    //         if (.vertical) {
-
-    //         }
-    //         if (i.horizontal) {
-
-    //         }
-    //     }
-    // }
-    // if (cell.vertical) {
-    //     const vWall = new Sprite(textures.vWall);
-    //     textures.vWall.img.src = 'images/wall/wall_vertical.png';
-
-    //     vWall.size.sx = 20;
-    //     vWall.size.sy = 100;
-    //     vWall.pos.x = x;
-    //     vWall.pos.y = y;
-    //     vWalls.add(vWall);
-    // }
-
-
 
     saveMaze(game) {
         if (singleGridArray == undefined) {
@@ -150,8 +118,8 @@ export default class ExternalServices {
                     playerPosition: game.playerPosition,
                     playerHealth: game.playerHealth,
                     playerMaxHealth: game.playerMaxHealth,
-                    ineventory: game.inventory,
-                    playerExperience: game.currentxp,
+                    //inventory: game.inventory,
+                    playerExperience: game.currentXp,
                     playerLevel: game.playerLevel,
                 },
             }),
@@ -183,10 +151,10 @@ export default class ExternalServices {
 
         const response = await fetch(base_url + 'signin', options).then(convertToJson);
         
-        if (response.status === 200) {
+        //if (response.status === 200) {
             localStorage.setItem('user', JSON.stringify(response.user)); 
             localStorage.setItem('token', response.token); 
-        }
+        //}
             
         
 
@@ -203,7 +171,7 @@ export default class ExternalServices {
         };
 
         const response = await fetch(base_url + 'signup', options).then(convertToJson);
-        if (response.status == 200)
+        //if (response.status == 200)
             localStorage.setItem('user', JSON.stringify(response.user)); //Or a cookie
         //Redirection send an error
         console.log(response);

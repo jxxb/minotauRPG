@@ -54,14 +54,14 @@ export default class User{
         try {
             return await this.services.loginRequest(creds);
         } catch(err) {
-            console.log("Error Loging In");
+            console.log("Error Logging In");
         }
     }
     async signup(creds) {
         try {
             return await this.services.signupRequest(creds);
         } catch(err) {
-            console.log("Error Loging Un!");
+            console.log("Error Logging In!");
         }
     }
 }
