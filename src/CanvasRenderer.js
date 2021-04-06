@@ -27,6 +27,7 @@ class CanvasRenderer {
             if (align) ctx.textAlign = align;
             ctx.fillText(child.text, 0, 0);
           } else if (child.tileW) {
+            //const img = '../images/weapons/weapons_sprite.png';
             const img = child.texture.img;
             ctx.drawImage(
               img,

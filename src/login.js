@@ -11,7 +11,7 @@ const formContent = document.querySelector('#formContent');
 
 //listeners
 
-formContent.addEventListener('click', (e) => {
+formContent.addEventListener('dblclick', (e) => {
     const gameId = e.target.getAttribute("for");
     user.setActualMaze(gameId);
     window.location.href = "gamepage.html";

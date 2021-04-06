@@ -42,7 +42,7 @@ const textures = {
    mino: new Texture('images/enemy/Enemy.png'),
    vWall: new Texture('images/wall/wall_vertical.png'),
    hWall: new Texture('images/wall/wall_horizontal.png'),
-   weaponTiles: new Texture('images/weapons/weapons_sprite.png')
+   weaponTiles: new Texture('http://127.0.0.1:5500/images/weapons/weapons_sprite.png')
 };
 const maze = new ExternalServices();
 
@@ -80,11 +80,11 @@ async function initialize() {
    scene.add(vWalls);
    let initial = user.getMassStorage();
    console.log(initial);
-   currentxp = initial.playerXp || 0;
+   currentxp = initial.playerExperience || 0;
    level = initial.playerLevel || 1;
-   initial.inventory.forEach((item) => {
-      inventory.add(item);
-   })
+   // initial.inventory.forEach((item) => {
+   //    inventory.add(item);
+   // })
    console.log(currentxp);
    console.log(level);
    character.pos.x = initial.playerPosition.x || 150;
@@ -200,21 +200,21 @@ character.update = function (dt, t) {
    }
 
    //character screen boundaries wrap
-   if (
-      this.pos.x < 0 || 
-      this.pos.x > w - this.size.sx ||
-      this.pos.y < 0 ||
-      this.pos.y > h - this.size.sy
-      ) {
-         hWalls.children.forEach((hWall) => {
-            hWalls.remove(hWall);
-         })
-         vWalls.children.forEach((vWall) => {
-            vWalls.remove(vWall);
-         })
-      //if (next maze doesn't exist)
-        walls();
-      }
+   // if (
+   //    this.pos.x < 0 || 
+   //    this.pos.x > w - this.size.sx ||
+   //    this.pos.y < 0 ||
+   //    this.pos.y > h - this.size.sy
+   //    ) {
+   //       hWalls.children.forEach((hWall) => {
+   //          hWalls.remove(hWall);
+   //       })
+   //       vWalls.children.forEach((vWall) => {
+   //          vWalls.remove(vWall);
+   //       })
+   //    //if (next maze doesn't exist)
+   //      walls();
+   //    }
 
    if (this.pos.x < 0) {
       this.pos.x = w - this.size.sx;
@@ -407,12 +407,11 @@ function saveMaze() {
          maxHealth: min.startingHealth,
       });
    }
-   console.log(inventory);
-   console.log(inventory.children[0].texture);
-   inventory.forEach((item) => {
-      item.texture = item.texture.img;
-      item.quantity = item.quantity.text;
-   });
+   // inventory.children.forEach((item) => {
+   //    item.texture = item.texture.img;
+   //    item.quantity = item.quantity.text;
+   // });
+   console.log(inventory.children);
    maze.saveMaze({
       enemyList: enemyList,
       userId: user.getUserInfo()._id, //The logged in user ID
@@ -421,7 +420,7 @@ function saveMaze() {
       playerMaxHealth: character.startingHealth, //Max health of the player
       currentXp: currentxp, //Not stored as part of the character currently
       playerLevel: level, //Not stored as part of the character currently
-      inventory: newInventory,//inventory.children,
+      //inventory: inventory.children,//inventory.children,
       mazeId: user.getMassStorage().gameId, //The ID of the maze
       token: user.getUserToken(),
    });
