@@ -75,6 +75,9 @@ character.center.y = character.pos.y + character.size.sy/2;
 async function initialize() {
 
    await walls();
+   scene.add(background);
+   scene.add(hWalls);
+   scene.add(vWalls);
    let initial = user.getMassStorage();
    console.log(initial);
    currentxp = initial.playerXp || 0;
@@ -84,9 +87,19 @@ async function initialize() {
    })
    console.log(currentxp);
    console.log(level);
-   character.pos.x = initial.playerPosition.x;
-   character.pos.y = initial.playerPosition.y;
-  
+   character.pos.x = initial.playerPosition.x || 150;
+   character.pos.y = initial.playerPosition.y || 400;
+   for (let enemy of initial.enemyList) {
+      spawnMino(enemy.pos.x, enemy.pos.y, 0);
+   }
+   // inventory.children = initial.inventory;
+   // for (let item of initial.inventory) {
+   //    console.log(item);
+   //    item.texture = new Texture(item.texture);
+   //    item.quantity = new Text(item.quantity, {font: "12pt sans-serif", fill: "Black", align: "center"});
+   //    inventory.add(item);
+   //    // inventory.add(new Texture(item.src));
+   // }
 }
 
 // const mazeArray = [];
@@ -222,9 +235,6 @@ character.update = function (dt, t) {
 
 
 function init() {
-   scene.add(background);
-   scene.add(hWalls);
-   scene.add(vWalls);
    scene.add(enemyWeapons);
    scene.add(weapon);
    scene.add(character);
@@ -397,8 +407,12 @@ function saveMaze() {
          maxHealth: min.startingHealth,
       });
    }
-  
-
+   console.log(inventory);
+   console.log(inventory.children[0].texture);
+   inventory.forEach((item) => {
+      item.texture = item.texture.img;
+      item.quantity = item.quantity.text;
+   });
    maze.saveMaze({
       enemyList: enemyList,
       userId: user.getUserInfo()._id, //The logged in user ID
@@ -407,7 +421,7 @@ function saveMaze() {
       playerMaxHealth: character.startingHealth, //Max health of the player
       currentXp: currentxp, //Not stored as part of the character currently
       playerLevel: level, //Not stored as part of the character currently
-      inventory: inventory.children,
+      inventory: newInventory,//inventory.children,
       mazeId: user.getMassStorage().gameId, //The ID of the maze
       token: user.getUserToken(),
    });

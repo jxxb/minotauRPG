@@ -53,7 +53,7 @@ export default class ExternalServices {
         localStorage.setItem('massStorage', JSON.stringify({
             maze: APIResponse.maze,
             enemyList: APIResponse.enemyList,
-            inventory: APIResponse.inventory,
+            inventory: APIResponse.ineventory,
             playerHealth: APIResponse.playerHealth,
             playerMaxHealth: APIResponse.playerMaxHealth,
             playerExperience: APIResponse.playerExperience,
