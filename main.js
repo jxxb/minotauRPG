@@ -29,7 +29,8 @@ const cellW = setup.cellW;
 const cellH = setup.cellH;
 let itemMultiple = 0;
 let newRoom = false;
-
+let currentxp;
+let level;
 
 const renderer = new CanvasRenderer(w, h);
 document.querySelector('#board').appendChild(renderer.view);
@@ -339,6 +340,53 @@ character.update = function (dt, t) {
             }
             
             //Increases Next Level to be bigger
+            
+            
+            
+            async function initialize() {
+               await walls();
+               scene.add(background);
+               scene.add(hWalls);
+               scene.add(vWalls);
+               let initial = user.getMassStorage();
+               console.log(initial);
+               currentxp = initial.playerExperience;
+               console.log("LVL");
+               
+               level = initial.playerLevel; 
+               console.log(level);
+               character.pos.x = initial.playerPosition.x || 150;
+               character.pos.y = initial.playerPosition.y || 400;
+               console.log(initial.inventory);
+               // for (let enemy of initial.enemyList) {
+                  //    spawnMino(enemy.pos.x, enemy.pos.y, 0);
+                  // }
+                  inventory.children = initial.inventory;
+                  for (let item of initial.inventory) {
+                     const thing = new TileSprite(textures.weaponTiles, item.tileW, item.tileH);
+                     
+                     item.texture = thing.texture
+                     item.quantity = new Text(item.quantity, {font: "12pt sans-serif", fill: "Black", align: "center"});
+                     
+                     inventory.add(item);
+                  }
+            }
+            
+            function init() {
+               scene.add(enemyWeapons);
+               scene.add(weapon);
+               scene.add(character);
+               scene.add(minows);
+               scene.add(healthBar);
+               scene.add(inventoryBackground);
+               scene.add(inventory);
+               scene.add(xp);
+               console.log(xp);
+               scene.add(currentLv);
+            }
+            //adding all elements
+            await initialize();
+            
             function exponential(a,b){
                for(let i=1; i<=b; i++){
                   a*=a;
@@ -347,8 +395,7 @@ character.update = function (dt, t) {
             }
 
             // Current Experience/Experience Until Next Level
-            let currentxp;
-            let level;
+            
             let nextLv = 50 * level;
             let nextLvXp = 1.1;
             const xp = new Text(`${currentxp}/${nextLv}`,  {
@@ -369,54 +416,9 @@ character.update = function (dt, t) {
             currentLv.pos.y = 50;
             
             
-            
-            
-            async function initialize() {
-               await walls();
-               scene.add(background);
-               scene.add(hWalls);
-               scene.add(vWalls);
-               let initial = user.getMassStorage();
-               console.log(initial);
-               currentxp = initial.playerExperience;
-               console.log("LVL");
-              
-               level = initial.playerLevel; 
-               console.log(level);
-               character.pos.x = initial.playerPosition.x || 150;
-               character.pos.y = initial.playerPosition.y || 400;
-               console.log(initial.inventory);
-               // for (let enemy of initial.enemyList) {
-               //    spawnMino(enemy.pos.x, enemy.pos.y, 0);
-               // }
-               inventory.children = initial.inventory;
-               for (let item of initial.inventory) {
-                  const thing = new TileSprite(textures.weaponTiles, item.tileW, item.tileH);
-                  
-                  item.texture = thing.texture
-                  item.quantity = new Text(item.quantity, {font: "12pt sans-serif", fill: "Black", align: "center"});
-            
-                  inventory.add(item);
-               }
-            }
-            //adding all elements
-            await initialize();
-
-            function init() {
-               scene.add(enemyWeapons);
-               scene.add(weapon);
-               scene.add(character);
-               scene.add(minows);
-               scene.add(healthBar);
-               scene.add(inventoryBackground);
-               scene.add(inventory);
-               scene.add(xp);
-               console.log(xp);
-               scene.add(currentLv);
-            }
             //adds all elements into scene
             init();
-
+            
 let dt = 0;
 let last = 0;
 let gameOver = false;
