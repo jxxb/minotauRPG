@@ -7,20 +7,23 @@ export default class Inventory extends Container{
     }
     add(child){
         let isThere = false;
+        console.log(child);
         this.children.forEach((item)=>{
             if(item.frame.y === child.frame.y){
                 isThere = true;
             }
         });
+        console.log(this.children);
         if(!isThere){
         let item = new Item(child.texture, child.tileW, child.tileH);
+        
         item.frame.y = child.frame.y;
         item.quantity.pos.x = 125;
         item.quantity.pos.y = 125;
         this.children.push(item);
-        }
-        else{
+        } else {
             this.children.forEach((item)=>{
+                console.log(item);
                 if(item.frame.y === child.frame.y){
                     item.quantity.text++;
                     console.log(item.quantity.text);
@@ -28,6 +31,4 @@ export default class Inventory extends Container{
             });
         }
     }
-
-
 }
